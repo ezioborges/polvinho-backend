@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import { NotFound } from './errors/NotFoundError.js';
-import { pongRoutes } from './modules/pong/routes/router.js';
+import { Router } from "express";
+import { NotFound } from "./errors/NotFoundError.js";
+import { pongRoutes } from "./modules/pong/routes/router.js";
 
 const routes = Router();
 
-routes.use('/pong', pongRoutes);
+routes.use("/pong", pongRoutes);
 
 // Catch-all route for handling 404 errors
 routes.use(() => {
-    throw new NotFound('Route doesn\'t exist');
+	throw new NotFound("Route doesn't exist");
 });
 
 export { routes };

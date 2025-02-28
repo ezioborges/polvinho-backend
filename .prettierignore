@@ -5,6 +5,3 @@
 .vscode
 .env
 .env.example
-/**/*.*
-!src/**/*.ts
-!src/**/*.tsx

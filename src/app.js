@@ -1,9 +1,9 @@
-import env from "./env/index.js"
+import cors from "cors";
 import express from "express";
 import "express-async-errors";
-import cors from "cors";
-import { routes } from "./routes.js";
+import env from "./env/index.js";
 import { GlobalErrorHandler } from "./errors/handlers/GlobalErrorHandler.js";
+import { routes } from "./routes.js";
 
 /**
  * Base app - class based.
@@ -43,8 +43,8 @@ class App {
 				status: "success",
 				data: {
 					version: "1.0.0",
-					documentation: req.protocol + "://" + req.get("host") + "/api/docs",
-					ping: req.protocol + "://" + req.get("host") + "/api/ping",
+					documentation: `${req.protocol}://${req.get("host")}/api/docs`,
+					ping: `${req.protocol}://${req.get("host")}/api/ping`,
 				},
 			});
 		});
@@ -56,7 +56,7 @@ class App {
 	errorHandling() {
 		this.server.use((err, req, res, next) => {
 			console.error(
-				`❌ Error ❌: ${err.message}\n⚠️ Stack ⚠️: ${err.stack} \n`
+				`❌ Error ❌: ${err.message}\n⚠️ Stack ⚠️: ${err.stack} \n`,
 			);
 			GlobalErrorHandler(err, req, res, next);
 		});

@@ -1,0 +1,24 @@
+    
+services:
+  app:
+    build: .
+    container_name: polvinho-quiz-api
+    restart: always
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    container_name: polvinho-quiz-database
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

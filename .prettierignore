@@ -1,0 +1,10 @@
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+.vscode
+.env
+.env.example
+/**/*.*
+!src/**/*.ts
+!src/**/*.tsx

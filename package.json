@@ -1,0 +1,46 @@
+{
+  "name": "polvinho-quiz-back-end",
+  "version": "1.0.0",
+  "description": "Uma plataforma de quizzes",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write .",
+    "lint": "eslint . ",
+    "lint:fix": "eslint . --fix ",
+    "start": "nodemon src/server.js --ignore __tests__"
+  },
+  "engines": {
+    "node": "22.13.1"
+  },
+  "keywords": [
+    "Node",
+    "Express.js"
+  ],
+  "author": "LabTIC Shippuden",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.11.0",
+    "nodemailer": "^6.10.0",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "eslint": "^9.21.0",
+    "eslint-config-eslint": "^11.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "globals": "^16.0.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.2"
+  }
+}

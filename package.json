@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write ./src/*",
+    "format": "prettier --write --log-level silent 'src/**/*.{js,ts,md,json}' --config ./.prettierrc.json",
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix ",
     "start": "nodemon src/server.js --ignore __tests__",

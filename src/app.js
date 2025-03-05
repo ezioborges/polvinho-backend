@@ -1,9 +1,9 @@
-import cors from "cors";
-import express from "express";
-import "express-async-errors";
-import env from "./env/index.js";
-import { GlobalErrorHandler } from "./errors/handlers/GlobalErrorHandler.js";
-import { routes } from "./routes.js";
+import cors from 'cors';
+import express from 'express';
+import 'express-async-errors';
+import env from './env/index.js';
+import { GlobalErrorHandler } from './errors/handlers/GlobalErrorHandler.js';
+import { routes } from './routes.js';
 
 /**
  * Base app - class based.
@@ -21,7 +21,7 @@ class App {
 	 * Application middlewares definition (to every request)
 	 */
 	middlewares() {
-		this.server.disable("x-powered-by");
+		this.server.disable('x-powered-by');
 		this.server.use(cors());
 		this.server.use(express.json());
 	}
@@ -37,14 +37,14 @@ class App {
 	 * Root route definition
 	 */
 	setRoot() {
-		this.server.get("/", (req, res) => {
+		this.server.get('/', (req, res) => {
 			res.json({
-				message: "Welcome to the polvinho-quiz-api",
-				status: "success",
+				message: 'Welcome to the polvinho-quiz-api',
+				status: 'success',
 				data: {
-					version: "1.0.0",
-					documentation: `${req.protocol}://${req.get("host")}/api/docs`,
-					ping: `${req.protocol}://${req.get("host")}/api/ping`,
+					version: '1.0.0',
+					documentation: `${req.protocol}://${req.get('host')}/api/docs`,
+					ping: `${req.protocol}://${req.get('host')}/api/ping`,
 				},
 			});
 		});

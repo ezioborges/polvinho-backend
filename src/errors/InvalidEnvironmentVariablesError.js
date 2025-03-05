@@ -9,6 +9,6 @@ export class InvalidEnvironmentVariablesError extends Error {
 	 */
 	constructor(message) {
 		super(message);
-		this.name = "InvalidEnvironmentVariablesError";
+		this.name = 'InvalidEnvironmentVariablesError';
 	}
 }

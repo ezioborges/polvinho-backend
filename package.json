@@ -10,8 +10,7 @@
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix ",
     "start": "nodemon src/server.js --ignore __tests__",
-    "prepare": "husky install"
-  },
+    },
   "engines": {
     "node": "22.13.1"
   },
@@ -21,9 +20,8 @@
   ],
   "author": "LabTIC Shippuden",
   "license": "ISC",
-  "dependencies": {
-    "@commitlint/cli": "^19.7.1",
-    "@commitlint/config-conventional": "^19.7.1",
+  "dependencies": 
+  {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -43,7 +41,6 @@
     "eslint-config-eslint": "^11.0.0",
     "eslint-plugin-import": "^2.31.0",
     "globals": "^16.0.0",
-    "husky": "^9.1.7",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.2"
   }

@@ -10,7 +10,7 @@
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix ",
     "start": "nodemon src/server.js --ignore __tests__"
-    },
+  },
   "engines": {
     "node": "22.13.1"
   },
@@ -20,8 +20,7 @@
   ],
   "author": "LabTIC Shippuden",
   "license": "ISC",
-  "dependencies": 
-  {
+  "dependencies": {
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",

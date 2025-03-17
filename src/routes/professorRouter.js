@@ -40,4 +40,24 @@ router.get('/:id', async (req, res) => {
   return res.status(200).send(professor)
 })
 
+router.put('/:id', async (req, res) => {
+  const { id } = req.params
+  
+  const { name, email, registration, passwordHash, role } = req.body
+
+  const newDataProfessor = {
+    name,
+    email,
+    registration,
+    passwordHash,
+    role,
+    updatedAt: Date.now()
+  }
+
+  await Professor.findById(id).updateOne(newDataProfessor)
+
+  return res.status(200).send('Atualizado com sucesso')
+  
+})
+
 export default router;

@@ -17,7 +17,6 @@ router.post('/', (req, res) => {
     updatedAt: null,
     isDeleted: req.body.isDeleted
   }
-  console.log(newProfessor);
   
   new Professor(newProfessor).save().then(() => {
     console.log('Professor cadastrado com sucesso!');
@@ -32,6 +31,13 @@ router.get('/', async (req, res) => {
   const professors = await Professor.find()
 
   res.status(200).send({ professors })
+})
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params
+  const professor = await Professor.findById(id).exec()
+
+  return res.status(200).send(professor)
 })
 
 export default router;

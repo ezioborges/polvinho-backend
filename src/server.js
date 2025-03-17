@@ -1,5 +1,5 @@
-import { port, app } from './app.js'
+import { app, port } from './app.js';
 
 app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
-})
+	console.log(`Servidor rodando na porta ${port}`);
+});

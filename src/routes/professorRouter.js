@@ -62,4 +62,6 @@ router.put('/:id', async (req, res) => {
 	return res.status(200).send('Atualizado com sucesso');
 });
 
+// Não esquecer a rota de delete
+
 export default router;

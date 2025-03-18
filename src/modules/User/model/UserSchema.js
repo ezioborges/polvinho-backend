@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ProfessorSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
 	name: { type: String, require: true },
 	email: { type: String, require: true },
 	registration: { type: String, require: true },
@@ -11,4 +11,4 @@ const ProfessorSchema = new mongoose.Schema({
 	isDeleted: { type: Boolean, require: true },
 });
 
-mongoose.model('professors', ProfessorSchema);
+mongoose.model('users', UserSchema);

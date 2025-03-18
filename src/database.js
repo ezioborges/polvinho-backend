@@ -1,12 +1,9 @@
-import { configDotenv } from 'dotenv';
+import { env } from './env/index.js';
 import mongoose from 'mongoose';
-
-const env = configDotenv()
-const { DATABASE_HOST } = env.parsed
 
 mongoose.Promise = global.Promise;
 mongoose
-	.connect(DATABASE_HOST)
+	.connect(env.DATABASE_HOST)
 	.then(() => {
 		console.log('Mongo conectado com sucesso! :)');
 	})

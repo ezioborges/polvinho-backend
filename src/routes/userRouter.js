@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import '../modules/User/model/UserSchema.js';
+import { compareIds, userArrayExists } from '../validation/index.js';
 
 const User = mongoose.model('users');
 
@@ -31,16 +32,30 @@ router.post('/', (req, res) => {
 });
 
 router.get('/', async (req, res) => {
-	const users = await User.find();
+	try {
+		const users = await User.find();
 
-	res.status(200).send({ users });
+		userArrayExists(users);
+
+		return res.status(200).send({ users });
+	} catch ({ message }) {
+		return res.status(404).send({ message });
+	}
 });
 
 router.get('/:id', async (req, res) => {
-	const { id } = req.params;
-	const user = await User.findById(id).exec();
+	try {
+		const { id } = req.params;
 
-	return res.status(200).send(user);
+		const user = await User.findById(id).exec();
+		const userId = user._id.toString();
+
+		compareIds(id, userId);
+
+		return res.status(200).send(user);
+	} catch ({ message }) {
+		return res.status(500).send({ message });
+	}
 });
 
 router.put('/:id', async (req, res) => {
@@ -63,11 +78,11 @@ router.put('/:id', async (req, res) => {
 });
 
 router.delete('/:id', async (req, res) => {
-	const { id } = req.params
+	const { id } = req.params;
 
-	await User.deleteOne({ _id: id })
+	await User.deleteOne({ _id: id });
 
-	return res.status(200).send({ message: 'Usuário deletado com sucesso!' })
-})
+	return res.status(200).send({ message: 'Usuário deletado com sucesso!' });
+});
 
 export default router;

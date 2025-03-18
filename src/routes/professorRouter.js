@@ -59,9 +59,15 @@ router.put('/:id', async (req, res) => {
 
 	await Professor.findById(id).updateOne(newDataProfessor);
 
-	return res.status(200).send('Atualizado com sucesso');
+	return res.status(200).send({ message: 'Professor atualizado com sucesso!' });
 });
 
-// Não esquecer a rota de delete
+router.delete('/:id', async (req, res) => {
+	const { id } = req.params
+	console.log("🚀 ~ router.delete ~ id:", id)
+
+	await Professor.deleteOne({ _id: id })
+	return res.status(200).send({ message: 'Professor deletado com sucesso!' })
+})
 
 export default router;

@@ -1,5 +1,5 @@
-import { configDotenv } from "dotenv";
+import { configDotenv } from 'dotenv';
 
-const test = configDotenv()
+const _env = configDotenv();
 
-export const env = test.parsed
+export const env = _env.parsed;

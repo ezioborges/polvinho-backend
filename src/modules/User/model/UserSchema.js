@@ -6,9 +6,11 @@ const UserSchema = new mongoose.Schema({
 	registration: { type: String, require: true },
 	passwordHash: { type: String, require: true },
 	role: { type: String, require: true },
-	createdAt: { type: Date, default: Date.now(), require: true },
-	updatedAt: { type: Date, default: Date.now() },
+	createdAt: { type: Date, default: Date.now() },
+	updatedAt: { type: Date, default: null },
 	isDeleted: { type: Boolean, require: true },
 });
 
-mongoose.model('users', UserSchema);
+const User = mongoose.model('users', UserSchema);
+
+export default User;

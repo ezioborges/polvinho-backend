@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
 	role: { type: String, require: true },
 	createdAt: { type: Date, default: Date.now() },
 	updatedAt: { type: Date, default: null },
-	isDeleted: { type: Boolean, require: true },
+	isDeleted: { type: Boolean, default: false },
 });
 
 const User = mongoose.model('users', UserSchema);

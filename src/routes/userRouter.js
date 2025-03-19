@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import '../modules/User/model/UserSchema.js';
 
 import {
@@ -9,8 +8,6 @@ import {
 	getUserById,
 	updateUser,
 } from '../modules/User/controller/userController.js';
-
-const User = mongoose.model('users');
 
 const router = express.Router();
 

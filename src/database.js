@@ -1,7 +1,8 @@
-import { env } from './env/index.js';
 import mongoose from 'mongoose';
+import { env } from './env/index.js';
 
 mongoose.Promise = global.Promise;
+
 mongoose
 	.connect(env.DATABASE_HOST)
 	.then(() => {

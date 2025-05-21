@@ -9,7 +9,8 @@
     "format": "prettier --write --log-level silent 'src/**/*.{js,ts,md,json}' --config ./.prettierrc.json",
     "lint": "eslint . ",
     "lint:fix": "eslint . --fix ",
-    "start": "nodemon src/server.js --ignore __tests__"
+    "start": "nodemon src/server.js --ignore __tests__",
+    "mongo": "sudo systemctl start mongod"
   },
   "engines": {
     "node": "22.13.1"

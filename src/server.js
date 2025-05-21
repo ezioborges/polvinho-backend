@@ -1,5 +1,6 @@
-import { port, app } from './app.js'
+import { app } from './app.js';
+import { env } from './env/index.js';
 
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
-})
+app.listen(env.PORT, () => {
+	console.log(`Servidor rodando na porta ${env.PORT}`);
+});

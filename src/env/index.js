@@ -13,6 +13,7 @@ export const env = {
 	NODE_ENV: process.env.NODE_ENV || 'development',
 	PORT: process.env.PORT || 2424,
 	DATABASE_HOST: process.env.DATABASE_HOST, // <-- Agora ele pega do process.env
+	JWT_SECRET: process.env.JWT_SECRET
 	// Adicione outras variáveis aqui se tiver
 };
 

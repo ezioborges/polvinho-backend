@@ -7,9 +7,16 @@ const JWT_SECRET = env.JWT_SECRET;
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, registration } = req.body;
 
-        const user  = await User.findOne({ email })
+        let user;  
+
+        if (email) {
+            user = await User.findOne({ email })
+        } else if (registration) {
+            user = await User.findOne({ registration })
+        }
+
         if (!user) {
             return res.status(404).send({ message: "Credenciais inválidas" })
         };
@@ -32,7 +39,7 @@ const login = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
-                emaail: user.email,
+                email: user.email,
                 role: user.role
             }
         })

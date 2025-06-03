@@ -1,4 +1,5 @@
-import { compareIds, userArrayExists } from '../../../validation/index.js';
+import { getAllErrors } from '../../../errors/getAllErros.js';
+import { compareIds, entityArrayExists } from '../../../validation/index.js';
 import User from '../model/UserSchema.js';
 
 export const createUser = async (req, res) => {
@@ -17,7 +18,7 @@ export const getAllUsers = async (_req, res) => {
 	try {
 		const users = await User.find();
 
-		userArrayExists(users);
+		entityArrayExists(users);
 
 		return res.status(200).send({ users });
 	} catch (error) {
@@ -40,7 +41,7 @@ export const getUserById = async (req, res) => {
 		return res.status(200).send(user);
 	} catch (error) {
 		res.status(404).send({
-			message: 'Usuário não encontrdo',
+			message: 'Usuário não encontrado',
 			error: error.message,
 		});
 	}
@@ -65,9 +66,20 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-	const { id } = req.params;
+	try {
+		const { id } = req.params;
+		const user = req.body;
 
-	await User.deleteOne({ _id: id });
+		await User.findById(id).updateOne({
+			...user,
+			isDeleted: true,
+			updatedAt: Date.now(),
+		});
 
-	res.status(200).send({ message: 'Usuário deletado com sucesso' });
+		return res
+			.status(200)
+			.send({ message: 'Usuário deletado com sucesso!' });
+	} catch (error) {
+		getAllErrors(res, 404, 'Erro ao deletar usuário', error.message);
+	}
 };

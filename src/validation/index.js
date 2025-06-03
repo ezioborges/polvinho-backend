@@ -1,4 +1,4 @@
-export const userArrayExists = arr => {
+export const entityArrayExists = arr => {
 	if (arr.length <= 0) {
 		throw new Error('Não há clientes cadastrados');
 	}

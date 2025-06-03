@@ -1,8 +1,9 @@
 import cors from 'cors';
 import express from 'express';
 import './database.js';
+import login from './routes/loginRouter.js';
+import subjects from './routes/subjectsRouter.js';
 import user from './routes/userRouter.js';
-import login from './routes/loginRouter.js'
 
 export const app = express();
 
@@ -11,4 +12,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use('/users', user);
-app.use('/login', login)
+app.use('/login', login);
+app.use('/subjects', subjects);

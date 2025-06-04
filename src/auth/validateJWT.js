@@ -8,16 +8,14 @@ function extractToken(bearerToken) {
 	return bearerToken.split(' ')[1];
 }
 
-export const validateJWT = async (req, res, next) => {
+export const adminVvalidateJWT = async (req, res, next) => {
 	const bearerToken = req.header('Authorization');
-	console.log('🚀 ~ validateJWT ~ bearerToken:', bearerToken);
 
 	if (!bearerToken) {
 		return res.status(401).json({ error: 'Token não fornecido' });
 	}
 
 	const token = extractToken(bearerToken);
-	console.log('🚀 ~ validateJWT ~ token:', token);
 
 	try {
 		const decoded = jwt.verify(token, secret);
@@ -26,13 +24,20 @@ export const validateJWT = async (req, res, next) => {
 		const user = await User.findById(decoded.id);
 		console.log('🚀 ~ validateJWT ~ user:', user);
 
+		const role = user.role.toLocaleLowerCase();
+		console.log('🚀 ~ validateJWT ~ role:', role);
+
 		if (!user) {
 			return res
 				.status(401)
 				.json({ error: 'Erro ao procurar usuário do token' });
 		}
 
-		console.log('req.user ===> ', req.user);
+		if (role !== 'admin') {
+			return res.status(403).json({
+				error: 'Acesso negado: Verifique suas credenciais.',
+			});
+		}
 
 		req.user = user;
 

@@ -8,7 +8,7 @@ function extractToken(bearerToken) {
 	return bearerToken.split(' ')[1];
 }
 
-export const adminVvalidateJWT = async (req, res, next) => {
+export const adminValidateJWT = async (req, res, next) => {
 	const bearerToken = req.header('Authorization');
 
 	if (!bearerToken) {
@@ -19,13 +19,10 @@ export const adminVvalidateJWT = async (req, res, next) => {
 
 	try {
 		const decoded = jwt.verify(token, secret);
-		console.log('🚀 ~ validateJWT ~ decoded:', decoded);
 
 		const user = await User.findById(decoded.id);
-		console.log('🚀 ~ validateJWT ~ user:', user);
 
 		const role = user.role.toLocaleLowerCase();
-		console.log('🚀 ~ validateJWT ~ role:', role);
 
 		if (!user) {
 			return res

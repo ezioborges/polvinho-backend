@@ -1,16 +1,30 @@
 import { getAllErrors } from '../../../errors/getAllErros.js';
 import { compareIds, entityArrayExists } from '../../../validation/index.js';
+import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../model/UserSchema.js';
 
 export const createUser = async (req, res) => {
 	try {
-		const newUser = new User(req.body);
+		const { subject, ...userData } = req.body;
+
+		const subjectToAssociate = await Subject.findOne({ name: subject });
+
+		if (!subjectToAssociate) {
+			return res
+				.status(404)
+				.send({ message: `Disciplina ${subject}, não cadastrada` });
+		}
+
+		const newUser = new User({
+			...userData,
+			subject: subjectToAssociate._id,
+		});
 		await newUser.save();
-		return res.status(201).send({ message: 'Usuário criado com sucesso!' });
-	} catch (error) {
 		return res
-			.status(500)
-			.send({ message: 'Erro ao criar usuário', error: error.message });
+			.status(201)
+			.send({ message: 'Aluno registrado com sucesso!' });
+	} catch (error) {
+		console.error('Erro ao registrar aluno com disciplina:', error);
 	}
 };
 

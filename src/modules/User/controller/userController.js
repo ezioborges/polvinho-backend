@@ -17,12 +17,12 @@ export const createUser = async (req, res) => {
 
 		const newUser = new User({
 			...userData,
-			subject: subjectToAssociate._id,
+			subject: [subjectToAssociate._id],
 		});
 		await newUser.save();
 		return res
 			.status(201)
-			.send({ message: 'Aluno registrado com sucesso!' });
+			.send({ message: 'Usuário registrado com sucesso!' });
 	} catch (error) {
 		console.error('Erro ao registrar aluno com disciplina:', error);
 	}

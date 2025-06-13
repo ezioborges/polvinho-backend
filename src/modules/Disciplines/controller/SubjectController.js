@@ -28,13 +28,13 @@ export const getAllSubjects = async (_req, res) => {
 
 export const getSubjectById = async (req, res) => {
 	try {
-		const { subjectId } = req.params;
+		const { subjectId } = req.params;		
 
-		const subject = await Subject.findById(subjectId);
+		const subject = await Subject.findById(subjectId);		
 
 		compareIds(subjectId, subject._id.toString());
 
-		return res.status(200).send(subject);
+		return res.status(200).send({ subject });
 	} catch (error) {
 		getAllErrors(res, 404, 'Disciplina não encontrada', error.message);
 	}

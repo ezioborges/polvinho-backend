@@ -106,7 +106,7 @@ export const getUserSubjects = async (req, res) => {
 		const { userId } = req.params;
 		const user = await User.findById(userId)
 
-		return res.status(200).send({ userSubjects: user.subject })
+		return res.status(200).send({ userSubjects: user })
 	} catch (error) {
 		getAllErrors(res, 404, 'Erro ao buscar disciplinas do usuário', error.message);
 	}

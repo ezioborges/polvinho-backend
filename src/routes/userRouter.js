@@ -7,6 +7,7 @@ import {
 	deleteUser,
 	getAllUsers,
 	getUserById,
+	getUserSubjects,
 	updateUser,
 } from '../modules/User/controller/userController.js';
 
@@ -28,6 +29,12 @@ router.get(
 	'/:id',
 	adminValidateJWT,
 	async (req, res) => await getUserById(req, res),
+);
+
+router.get(
+	'/:userId/subjects',
+	adminValidateJWT,
+	async (req, res) => await getUserSubjects(req, res),
 );
 
 router.put(

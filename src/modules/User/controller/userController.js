@@ -66,6 +66,9 @@ export const updateUser = async (req, res) => {
 		const { id } = req.params;
 		const user = req.body;
 
+		console.log(`quero ver o que vem do user: ${user}`);
+		
+
 		await User.findById(id).updateOne({ ...user, updatedAt: Date.now() });
 
 		return res
@@ -97,3 +100,14 @@ export const deleteUser = async (req, res) => {
 		getAllErrors(res, 404, 'Erro ao deletar usuário', error.message);
 	}
 };
+
+export const getUserSubjects = async (req, res) => {
+	try {
+		const { userId } = req.params;
+		const user = await User.findById(userId)
+
+		return res.status(200).send({ userSubjects: user.subject })
+	} catch (error) {
+		getAllErrors(res, 404, 'Erro ao buscar disciplinas do usuário', error.message);
+	}
+}; 

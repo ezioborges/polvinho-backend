@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
 	subject: [{
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'subjects',
-		required: true,
+		required: false,
 	}],
 });
 

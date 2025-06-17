@@ -5,6 +5,11 @@ const SubjectSchema = new mongoose.Schema({
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: null },
 	isDeleted: { type: Boolean, default: false },
+	professor: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'users',
+		required: true,
+	},
 });
 
 const Subject = mongoose.model('subjects', SubjectSchema);

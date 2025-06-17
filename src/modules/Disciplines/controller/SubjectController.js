@@ -1,14 +1,45 @@
 import { getAllErrors } from '../../../errors/getAllErros.js';
 import { compareIds, entityArrayExists } from '../../../validation/index.js';
+import User from '../../User/model/UserSchema.js';
 import Subject from '../model/SubjectSchema.js';
 
 export const createSubject = async (req, res) => {
 	try {
-		const newSubject = new Subject(req.body);
+		// const newSubject = new Subject(req.body);
+		// await newSubject.save();
+		// return res
+		// 	.status(201)
+		// 	.send({ message: 'Disciplina criado com sucesso!' });
+		const { professor, ...subjectsData } = req.body;
+
+		if (!professor) {
+			return res.status(401).send({
+				message: 'É necessário informar o professor responsável pela disciplina',
+			});
+		}
+
+		const professorToAssociate = await User.findOne({ name: professor})
+
+		if (!professorToAssociate) {
+			return res.status(404).send({
+				message: `Professor ${professor}, não encontrado`,
+			});
+		}
+
+		const newSubject = new Subject({
+			...subjectsData,
+			professor: professorToAssociate._id,
+		})
+
 		await newSubject.save();
-		return res
-			.status(201)
-			.send({ message: 'Disciplina criado com sucesso!' });
+
+		await User.findByIdAndUpdate(
+			professorToAssociate._id,
+			{ $push: { subject: newSubject._id } },
+			{ new: true, useFindAndModify: false }
+		)
+
+		return res.status(201).send({ message: 'Disciiplina criada com sucesso' })
 	} catch (error) {
 		getAllErrors(res, 500, 'Erro ao carregar a disciplina', error.message);
 	}

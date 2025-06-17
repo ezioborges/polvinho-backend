@@ -6,18 +6,23 @@ import User from '../model/UserSchema.js';
 export const createUser = async (req, res) => {
 	try {
 		const { subject, ...userData } = req.body;
+		let subjectToAssociate = [];
 
-		const subjectToAssociate = await Subject.findOne({ name: subject });
+		if (subject) {
+			const foundSubject = await Subject.findOne({ name: subject })
 
-		if (!subjectToAssociate) {
-			return res
-				.status(404)
-				.send({ message: `Disciplina ${subject}, não cadastrada` });
+			if (!foundSubject) {
+				return res
+					.status(404)
+					.send({ message: `Disciplina ${subject}, não cadastrada` });
+			}
+			subjectToAssociate = [foundSubject._id]
 		}
+
 
 		const newUser = new User({
 			...userData,
-			subject: [subjectToAssociate._id],
+			subject: subjectToAssociate,
 		});
 		await newUser.save();
 		return res
@@ -64,10 +69,7 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const user = req.body;
-
-		console.log(`quero ver o que vem do user: ${user}`);
-		
+		const user = req.body;		
 
 		await User.findById(id).updateOne({ ...user, updatedAt: Date.now() });
 

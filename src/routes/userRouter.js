@@ -15,7 +15,6 @@ const router = express.Router();
 
 router.post(
 	'/',
-	adminValidateJWT,
 	async (req, res) => await createUser(req, res),
 );
 

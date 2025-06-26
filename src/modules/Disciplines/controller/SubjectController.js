@@ -5,20 +5,16 @@ import Subject from '../model/SubjectSchema.js';
 
 export const createSubject = async (req, res) => {
 	try {
-		// const newSubject = new Subject(req.body);
-		// await newSubject.save();
-		// return res
-		// 	.status(201)
-		// 	.send({ message: 'Disciplina criado com sucesso!' });
 		const { professor, ...subjectsData } = req.body;
 
 		if (!professor) {
 			return res.status(401).send({
-				message: 'É necessário informar o professor responsável pela disciplina',
+				message:
+					'É necessário informar o professor responsável pela disciplina',
 			});
 		}
 
-		const professorToAssociate = await User.findOne({ name: professor})
+		const professorToAssociate = await User.findOne({ name: professor });
 
 		if (!professorToAssociate) {
 			return res.status(404).send({
@@ -29,17 +25,19 @@ export const createSubject = async (req, res) => {
 		const newSubject = new Subject({
 			...subjectsData,
 			professor: professorToAssociate._id,
-		})
+		});
 
 		await newSubject.save();
 
 		await User.findByIdAndUpdate(
 			professorToAssociate._id,
 			{ $push: { subject: newSubject._id } },
-			{ new: true, useFindAndModify: false }
-		)
+			{ new: true, useFindAndModify: false },
+		);
 
-		return res.status(201).send({ message: 'Disciiplina criada com sucesso' })
+		return res
+			.status(201)
+			.send({ message: 'Disciiplina criada com sucesso' });
 	} catch (error) {
 		getAllErrors(res, 500, 'Erro ao carregar a disciplina', error.message);
 	}
@@ -59,9 +57,9 @@ export const getAllSubjects = async (_req, res) => {
 
 export const getSubjectById = async (req, res) => {
 	try {
-		const { subjectId } = req.params;		
+		const { subjectId } = req.params;
 
-		const subject = await Subject.findById(subjectId);		
+		const subject = await Subject.findById(subjectId);
 
 		compareIds(subjectId, subject._id.toString());
 
@@ -74,10 +72,53 @@ export const getSubjectById = async (req, res) => {
 export const updateSubject = async (req, res) => {
 	try {
 		const { subjectId } = req.params;
-		const discipline = req.body;
+		const { professor, ...subjectsData } = req.body;
 
-		await Subject.findById(subjectId).updateOne({
-			...discipline,
+		if (!professor) {
+			return res.status(401).send({
+				message:
+					'É necessário informar o professor responsável pela disciplina',
+			});
+		}
+
+		// Buscar a disciplina atual para obter o professor antigo
+		const currentSubject = await Subject.findById(subjectId);
+
+		if (!currentSubject) {
+			return res.status(404).send({
+				message: 'Disciplina não encontrada',
+			});
+		}
+
+		const professorToAssociate = await User.findOne({ name: professor });
+
+		if (!professorToAssociate) {
+			return res.status(404).send({
+				message: `Professor ${professor}, não encontrado`,
+			});
+		}
+
+		// Se o professor está mudando, atualizar as relações
+		if (currentSubject.professor !== professorToAssociate._id) {
+			// Remover a disciplina do professor antigo
+			await User.findByIdAndUpdate(
+				currentSubject.professor,
+				{ $pull: { subject: subjectId } },
+				{ new: true, useFindAndModify: false },
+			);
+
+			// Adicionar a disciplina ao novo professor
+			await User.findByIdAndUpdate(
+				professorToAssociate._id,
+				{ $push: { subject: subjectId } },
+				{ new: true, useFindAndModify: false },
+			);
+		}
+
+		// Atualizar a disciplina
+		await Subject.findByIdAndUpdate(subjectId, {
+			...subjectsData,
+			professor: professorToAssociate._id,
 			updatedAt: Date.now(),
 		});
 

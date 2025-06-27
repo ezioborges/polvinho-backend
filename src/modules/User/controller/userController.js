@@ -8,22 +8,24 @@ export const createUser = async (req, res) => {
 		const { subject, ...userData } = req.body;
 		let subjectToAssociate = [];
 
-		if (subject) {
-			const foundSubject = await Subject.findOne({ name: subject })
+		console.log('subject ===> ', subject);
+		console.log('userData ===> ', userData);
+		
 
-			if (!foundSubject) {
-				return res
-					.status(404)
-					.send({ message: `Disciplina ${subject}, não cadastrada` });
-			}
-			subjectToAssociate = [foundSubject._id]
+		if (!subject || subject.length === 0) {
+			return res.status(400).send({ message: 'Por favor, cadastre o nome de uma disciplina!' })
 		}
-
-
+		
+		
+		const newSubject = new Subject({
+			name: subject,
+			professor: userData.name
+		})
 		const newUser = new User({
 			...userData,
-			subject: subjectToAssociate,
+			subject: newSubject,
 		});
+
 		await newUser.save();
 		return res
 			.status(201)

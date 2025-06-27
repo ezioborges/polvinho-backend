@@ -8,7 +8,7 @@ const SubjectSchema = new mongoose.Schema({
 	professor: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'users',
-		required: true,
+		default: null,
 	},
 });
 

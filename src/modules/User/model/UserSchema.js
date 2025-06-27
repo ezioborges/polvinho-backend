@@ -10,11 +10,13 @@ const UserSchema = new mongoose.Schema({
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: null },
 	isDeleted: { type: Boolean, default: false },
-	subject: [{
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'subjects',
-		required: false,
-	}],
+	subject: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'subjects',
+			default: null,
+		},
+	],
 });
 
 // para criptografar as senhas quando o usuário é criado ou atualizado

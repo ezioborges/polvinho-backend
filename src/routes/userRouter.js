@@ -2,6 +2,7 @@ import express from 'express';
 import '../modules/User/model/UserSchema.js';
 
 import { adminValidateJWT } from '../auth/validateJWT.js';
+import { createProfessorController } from '../modules/User/controller/professorController.js';
 import {
 	createUser,
 	deleteUser,
@@ -10,12 +11,17 @@ import {
 	getUserSubjects,
 	updateUser,
 } from '../modules/User/controller/userController.js';
+import { createProfessorValidate } from '../validation/createUserValidate.js';
 
 const router = express.Router();
 
+router.post('/', async (req, res) => await createUser(req, res));
+
 router.post(
-	'/',
-	async (req, res) => await createUser(req, res),
+	'/professor',
+	adminValidateJWT,
+	createProfessorValidate,
+	async (req, res) => createProfessorController(req, res),
 );
 
 router.get(

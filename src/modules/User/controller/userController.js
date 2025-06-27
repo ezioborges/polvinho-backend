@@ -6,21 +6,17 @@ import User from '../model/UserSchema.js';
 export const createUser = async (req, res) => {
 	try {
 		const { subject, ...userData } = req.body;
-		let subjectToAssociate = [];
-
-		console.log('subject ===> ', subject);
-		console.log('userData ===> ', userData);
-		
 
 		if (!subject || subject.length === 0) {
-			return res.status(400).send({ message: 'Por favor, cadastre o nome de uma disciplina!' })
+			return res.status(400).send({
+				message: 'Por favor, cadastre o nome de uma disciplina!',
+			});
 		}
-		
-		
+
 		const newSubject = new Subject({
 			name: subject,
-			professor: userData.name
-		})
+			professor: userData.name,
+		});
 		const newUser = new User({
 			...userData,
 			subject: newSubject,
@@ -71,7 +67,7 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const user = req.body;		
+		const user = req.body;
 
 		await User.findById(id).updateOne({ ...user, updatedAt: Date.now() });
 
@@ -108,10 +104,15 @@ export const deleteUser = async (req, res) => {
 export const getUserSubjects = async (req, res) => {
 	try {
 		const { userId } = req.params;
-		const user = await User.findById(userId)
+		const user = await User.findById(userId);
 
-		return res.status(200).send({ userSubjects: user })
+		return res.status(200).send({ userSubjects: user });
 	} catch (error) {
-		getAllErrors(res, 404, 'Erro ao buscar disciplinas do usuário', error.message);
+		getAllErrors(
+			res,
+			404,
+			'Erro ao buscar disciplinas do usuário',
+			error.message,
+		);
 	}
-}; 
+};

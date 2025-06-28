@@ -1,33 +1,15 @@
 import { getAllErrors } from '../../../errors/getAllErros.js';
 import { compareIds, entityArrayExists } from '../../../validation/index.js';
-import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../model/UserSchema.js';
+import { createUserService } from '../service/userService.js';
 
-export const createUser = async (req, res) => {
+export const createUserController = async (req, res) => {
 	try {
-		const { subject, ...userData } = req.body;
+		const user = await createUserService(req, res);
 
-		if (!subject || subject.length === 0) {
-			return res.status(400).send({
-				message: 'Por favor, cadastre o nome de uma disciplina!',
-			});
-		}
-
-		const newSubject = new Subject({
-			name: subject,
-			professor: userData.name,
-		});
-		const newUser = new User({
-			...userData,
-			subject: newSubject,
-		});
-
-		await newUser.save();
-		return res
-			.status(201)
-			.send({ message: 'Usuário registrado com sucesso!' });
+		return res.status(user.status).send({ message: user.message });
 	} catch (error) {
-		console.error('Erro ao registrar aluno com disciplina:', error);
+		throw new Error('Erro ao cadastrar proferssor', error.message);
 	}
 };
 

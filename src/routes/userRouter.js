@@ -2,9 +2,8 @@ import express from 'express';
 import '../modules/User/model/UserSchema.js';
 
 import { adminValidateJWT } from '../auth/validateJWT.js';
-import { createProfessorController } from '../modules/User/controller/professorController.js';
 import {
-	createUser,
+	createUserController,
 	deleteUser,
 	getAllUsers,
 	getUserById,
@@ -15,13 +14,8 @@ import { createProfessorValidate } from '../validation/createUserValidate.js';
 
 const router = express.Router();
 
-router.post('/', async (req, res) => await createUser(req, res));
-
-router.post(
-	'/professor',
-	adminValidateJWT,
-	createProfessorValidate,
-	async (req, res) => createProfessorController(req, res),
+router.post('/', adminValidateJWT, createProfessorValidate, async (req, res) =>
+	createUserController(req, res),
 );
 
 router.get(

@@ -11,7 +11,6 @@ export const createSubject = async (req, res) => {
 			res,
 		);
 
-		console.log('Subject created:', subject);
 		await subject.save();
 
 		return res.status(status).send({ message });

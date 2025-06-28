@@ -5,7 +5,7 @@ import { adminValidateJWT } from '../auth/validateJWT.js';
 import {
 	createUserController,
 	deleteUser,
-	getAllUsers,
+	getAllUsersController,
 	getUserById,
 	getUserSubjects,
 	updateUser,
@@ -21,7 +21,7 @@ router.post('/', adminValidateJWT, createProfessorValidate, async (req, res) =>
 router.get(
 	'/',
 	adminValidateJWT,
-	async (req, res) => await getAllUsers(req, res),
+	async (req, res) => await getAllUsersController(req, res),
 );
 
 router.get(

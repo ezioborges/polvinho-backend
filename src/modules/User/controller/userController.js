@@ -1,7 +1,10 @@
 import { getAllErrors } from '../../../errors/getAllErros.js';
-import { compareIds, entityArrayExists } from '../../../validation/index.js';
+import { compareIds } from '../../../validation/index.js';
 import User from '../model/UserSchema.js';
-import { createUserService } from '../service/userService.js';
+import {
+	createUserService,
+	getAllUsersService,
+} from '../service/userService.js';
 
 export const createUserController = async (req, res) => {
 	try {
@@ -13,15 +16,14 @@ export const createUserController = async (req, res) => {
 	}
 };
 
-export const getAllUsers = async (_req, res) => {
+export const getAllUsersController = async (_req, res) => {
 	try {
-		const users = await User.find();
+		const users = await getAllUsersService();
+		console.log('users ==> ', users);
 
-		entityArrayExists(users);
-
-		return res.status(200).send({ users });
+		return res.status(users.status).send({ usersList: users.data });
 	} catch (error) {
-		return res.status(404).send({
+		res.status(404).send({
 			message: 'Usuários não encontrados',
 			error: error.message,
 		});

@@ -15,10 +15,6 @@ export const createUserService = async req => {
 
 		const subjectExists = await Subject.findOne({ name: subject });
 
-		if (!subjectExists) {
-			return { status: 400, message: 'Disciplina não informada' };
-		}
-
 		const existingUser = await User.findOne({
 			$or: [
 				{ email: userData.email },
@@ -38,8 +34,10 @@ export const createUserService = async req => {
 
 		const newProfessor = new User({
 			...userData,
-			subject: subjectExists._id,
+			subject: subjectExists ? subjectExists._id : null,
 		});
+
+		console.log('Novo professor:', newProfessor);
 
 		await newProfessor.save();
 
@@ -50,5 +48,21 @@ export const createUserService = async req => {
 			error.message ||
 				`Erro inesperado no serviço de criação de professor.`,
 		);
+	}
+};
+
+export const getAllUsersService = async () => {
+	try {
+		const users = await User.find();
+
+		if (!users || users.length === 0) {
+			return { status: 400, message: 'Nenhum usuário encontrado.' };
+		}
+
+		console.log('Usuários encontrados:', users);
+
+		return { status: 200, data: users };
+	} catch (error) {
+		return { status: 404, message: error.message };
 	}
 };

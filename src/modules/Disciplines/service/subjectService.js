@@ -2,7 +2,7 @@ import Subject from '../model/SubjectSchema.js';
 
 export const createSubjectService = async (req, res) => {
 	try {
-		const { ...subjectData } = req.body;
+		const subjectData = req.body;
 
 		const newSubject = new Subject({
 			...subjectData,

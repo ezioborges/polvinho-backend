@@ -1,7 +1,6 @@
-import { getAllErrors } from '../../../errors/getAllErros.js';
-import Subject from '../model/SubjectSchema.js';
 import {
 	createSubjectService,
+	deleteSubjectService,
 	getAllSubjectsService,
 	getSubjectByIdService,
 	updateSubjectService,
@@ -31,22 +30,8 @@ export const updateSubjectController = async (req, res) => {
 	return res.status(status).send(data);
 };
 
-export const deleteSubject = async (req, res) => {
-	try {
-		const { subjectId } = req.params;
+export const deleteSubjectController = async (req, res) => {
+	const { status, data } = await deleteSubjectService(req);
 
-		const disciplines = req.body;
-
-		await Subject.findById(subjectId).updateOne({
-			...disciplines,
-			isDeleted: true,
-			updatedAt: Date.now(),
-		});
-
-		return res
-			.status(200)
-			.send({ message: 'Disciplina deletada com sucesso!' });
-	} catch (error) {
-		getAllErrors(res, 404, 'Erro ao deletar disciplina', error.message);
-	}
+	return res.status(status).send(data);
 };

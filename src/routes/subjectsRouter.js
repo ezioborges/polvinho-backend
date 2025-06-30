@@ -1,7 +1,7 @@
 import express from 'express';
 import {
 	createSubjectController,
-	deleteSubject,
+	deleteSubjectController,
 	getAllSubjectsController,
 	getSubjectByIdController,
 	updateSubjectController,
@@ -20,6 +20,9 @@ router.put(
 	'/:subjectId',
 	async (req, res) => await updateSubjectController(req, res),
 );
-router.delete('/:subjectId', async (req, res) => await deleteSubject(req, res));
+router.delete(
+	'/:subjectId',
+	async (req, res) => await deleteSubjectController(req, res),
+);
 
 export default router;

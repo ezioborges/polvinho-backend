@@ -1,7 +1,7 @@
 import User from '../../User/model/UserSchema.js';
 import Subject from '../model/SubjectSchema.js';
 
-export const createSubjectService = async (req, res) => {
+export const createSubjectService = async req => {
 	try {
 		const subjectData = req.body;
 
@@ -17,10 +17,7 @@ export const createSubjectService = async (req, res) => {
 			message: 'Disciplina criada com sucesso!',
 		};
 	} catch (error) {
-		res.status(500).send({
-			message: 'Erro ao criar disciplina',
-			error: error.message,
-		});
+		return { status: 500, data: { message: error.message } };
 	}
 };
 
@@ -29,12 +26,15 @@ export const getAllSubjectsService = async () => {
 		const subject = await Subject.find();
 
 		if (!subject || subject.length === 0) {
-			return { status: 404, message: 'Nenhuma disciplina encontrada' };
+			return {
+				status: 404,
+				data: { message: 'Nenhuma disciplina encontrada' },
+			};
 		}
 
 		return { status: 200, data: subject };
 	} catch (error) {
-		return { status: 500, message: error.message };
+		return { status: 500, mesdayasage: error.message };
 	}
 };
 
@@ -46,7 +46,7 @@ export const getSubjectByIdService = async req => {
 
 		return { status: 200, data: subjectById };
 	} catch (error) {
-		return { status: 500, message: error.message };
+		return { status: 500, data: error.message };
 	}
 };
 
@@ -85,6 +85,21 @@ export const updateSubjectService = async req => {
 
 		return { status: 200, data: updatedSubject };
 	} catch (error) {
-		return { status: 500, message: error.message };
+		return { status: 500, data: error.message };
+	}
+};
+
+export const deleteSubjectService = async req => {
+	try {
+		const { subjectId } = req.params;
+
+		await Subject.findByIdAndUpdate(subjectId, {
+			isDeleted: true,
+			updatedAt: Date.now(),
+		});
+
+		return { status: 200, data: { message: 'Subject deleted' } };
+	} catch (error) {
+		return { status: 500, data: error.message };
 	}
 };

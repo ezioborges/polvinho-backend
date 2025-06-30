@@ -1,9 +1,9 @@
 import { getAllErrors } from '../../../errors/getAllErros.js';
-import { compareIds } from '../../../validation/index.js';
 import User from '../model/UserSchema.js';
 import {
 	createUserService,
 	getAllUsersService,
+	getUserByIdService,
 } from '../service/userService.js';
 
 export const createUserController = async (req, res) => {
@@ -19,7 +19,6 @@ export const createUserController = async (req, res) => {
 export const getAllUsersController = async (_req, res) => {
 	try {
 		const users = await getAllUsersService();
-		console.log('users ==> ', users);
 
 		return res.status(users.status).send({ usersList: users.data });
 	} catch (error) {
@@ -30,24 +29,20 @@ export const getAllUsersController = async (_req, res) => {
 	}
 };
 
-export const getUserById = async (req, res) => {
+export const getUserByIdController = async (req, res) => {
 	try {
-		const { id } = req.params;
+		const { status, data } = await getUserByIdService(req);
 
-		const user = await User.findById(id);
-		const userId = user._id.toString();
-
-		compareIds(id, userId);
-
-		return res.status(200).send(user);
+		return res.status(status).send(data);
 	} catch (error) {
-		res.status(404).send({
-			message: 'Usuário não encontrado',
-			error: error.message,
+		res.status(500).send({
+			message: error.message,
 		});
 	}
 };
 
+// TODO: refatorar a forma de fazer o update.
+// Todos os campos podem ser atualizados. Verificar a existencia da disciplina.
 export const updateUser = async (req, res) => {
 	try {
 		const { id } = req.params;

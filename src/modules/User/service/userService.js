@@ -37,8 +37,6 @@ export const createUserService = async req => {
 			subject: subjectExists ? subjectExists._id : null,
 		});
 
-		console.log('Novo professor:', newProfessor);
-
 		await newProfessor.save();
 
 		return { status: 201, message: 'Professor cadastrado com sucesso!' };
@@ -59,9 +57,18 @@ export const getAllUsersService = async () => {
 			return { status: 400, message: 'Nenhum usuário encontrado.' };
 		}
 
-		console.log('Usuários encontrados:', users);
-
 		return { status: 200, data: users };
+	} catch (error) {
+		return { status: 404, message: error.message };
+	}
+};
+
+export const getUserByIdService = async req => {
+	try {
+		const { id } = req.params;
+		const userById = await User.findById(id);
+
+		return { status: 200, data: userById };
 	} catch (error) {
 		return { status: 404, message: error.message };
 	}

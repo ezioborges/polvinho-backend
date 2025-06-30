@@ -106,3 +106,22 @@ export const updateUserService = async req => {
 		return { status: 500, message: error.message };
 	}
 };
+
+export const deleteUserService = async req => {
+	try {
+		const { id } = req.params;
+
+		await User.findByIdAndUpdate(
+			id,
+			{
+				isDeleted: true,
+				updatedAt: Date.now(),
+			},
+			{ new: true },
+		);
+
+		return { status: 200, data: { message: 'User deleted' } };
+	} catch (error) {
+		return { status: 404, data: { message: error.message } };
+	}
+};

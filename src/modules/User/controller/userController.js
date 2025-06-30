@@ -1,7 +1,6 @@
-import { getAllErrors } from '../../../errors/getAllErros.js';
-import User from '../model/UserSchema.js';
 import {
 	createUserService,
+	deleteUserService,
 	getAllUsersService,
 	getUserByIdService,
 	updateUserService,
@@ -31,37 +30,8 @@ export const updateUserController = async (req, res) => {
 	return res.status(service.status).send(service.data);
 };
 
-export const deleteUser = async (req, res) => {
-	try {
-		const { id } = req.params;
-		const user = req.body;
+export const deleteUserController = async (req, res) => {
+	const service = await deleteUserService(req);
 
-		await User.findById(id).updateOne({
-			...user,
-			isDeleted: true,
-			updatedAt: Date.now(),
-		});
-
-		return res
-			.status(200)
-			.send({ message: 'Usuário deletado com sucesso!' });
-	} catch (error) {
-		getAllErrors(res, 404, 'Erro ao deletar usuário', error.message);
-	}
-};
-
-export const getUserSubjects = async (req, res) => {
-	try {
-		const { userId } = req.params;
-		const user = await User.findById(userId);
-
-		return res.status(200).send({ userSubjects: user });
-	} catch (error) {
-		getAllErrors(
-			res,
-			404,
-			'Erro ao buscar disciplinas do usuário',
-			error.message,
-		);
-	}
+	return res.status(service.status).send(service.data);
 };

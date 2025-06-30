@@ -4,10 +4,9 @@ import '../modules/User/model/UserSchema.js';
 import { adminValidateJWT } from '../auth/validateJWT.js';
 import {
 	createUserController,
-	deleteUser,
+	deleteUserController,
 	getAllUsersController,
 	getUserByIdController,
-	getUserSubjects,
 	updateUserController,
 } from '../modules/User/controller/userController.js';
 import { createProfessorValidate } from '../validation/createUserValidate.js';
@@ -36,16 +35,10 @@ router.put(
 	async (req, res) => await updateUserController(req, res),
 );
 
-router.get(
-	'/:userId/subjects',
-	adminValidateJWT,
-	async (req, res) => await getUserSubjects(req, res),
-);
-
 router.delete(
 	'/:id',
 	adminValidateJWT,
-	async (req, res) => await deleteUser(req, res),
+	async (req, res) => await deleteUserController(req, res),
 );
 
 export default router;

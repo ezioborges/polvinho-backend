@@ -8,7 +8,7 @@ import {
 	getAllUsersController,
 	getUserByIdController,
 	getUserSubjects,
-	updateUser,
+	updateUserController,
 } from '../modules/User/controller/userController.js';
 import { createProfessorValidate } from '../validation/createUserValidate.js';
 
@@ -30,16 +30,16 @@ router.get(
 	async (req, res) => await getUserByIdController(req, res),
 );
 
+router.put(
+	'/:id',
+	adminValidateJWT,
+	async (req, res) => await updateUserController(req, res),
+);
+
 router.get(
 	'/:userId/subjects',
 	adminValidateJWT,
 	async (req, res) => await getUserSubjects(req, res),
-);
-
-router.put(
-	'/:id',
-	adminValidateJWT,
-	async (req, res) => await updateUser(req, res),
 );
 
 router.delete(

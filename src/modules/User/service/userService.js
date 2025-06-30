@@ -5,14 +5,6 @@ export const createUserService = async req => {
 	try {
 		const { subject, ...userData } = req.body;
 
-		if (!subject || subject.length === 0) {
-			return {
-				status: 400,
-				message:
-					'Por favor associe o professor a uma matéria existente',
-			};
-		}
-
 		const subjectExists = await Subject.findOne({ name: subject });
 
 		const existingUser = await User.findOne({
@@ -71,5 +63,46 @@ export const getUserByIdService = async req => {
 		return { status: 200, data: userById };
 	} catch (error) {
 		return { status: 404, message: error.message };
+	}
+};
+
+export const updateUserService = async req => {
+	try {
+		const { id } = req.params;
+		const { subject, ...userData } = req.body;
+
+		const updateData = { ...userData, updatedAt: Date.now() };
+
+		const subjectExists = await Subject.findOne({ name: subject });
+
+		if (!subjectExists) {
+			const [name] = subject;
+			return {
+				status: 400,
+				data: {
+					message: `Disciplina "${name}", não cadastrada `,
+				},
+			};
+		}
+
+		updateData.subject = subjectExists._id;
+
+		await Subject.findByIdAndUpdate(
+			subjectExists.id,
+			{
+				professor: id,
+				updatedAt: Date.now(),
+			},
+			{ new: true },
+		);
+
+		const userUpdated = await User.findByIdAndUpdate(id, updateData, {
+			new: true,
+			runValidators: true,
+		}).populate('subject');
+
+		return { status: 200, data: userUpdated };
+	} catch (error) {
+		return { status: 500, message: error.message };
 	}
 };

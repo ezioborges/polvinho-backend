@@ -3,8 +3,7 @@ import {
 	deleteSubjectService,
 	getAllSubjectsService,
 	getSubjectByIdService,
-	insertProfessorInSubjectService,
-	insertStudentInSubjectService,
+	updateSubjctService,
 } from '../service/subjectService.js';
 
 export const createSubjectController = async (req, res) => {
@@ -25,20 +24,14 @@ export const getSubjectByIdController = async (req, res) => {
 	res.status(status).send(data);
 };
 
-export const insertProfessorInSubjectController = async (req, res) => {
-	const { status, data } = await insertProfessorInSubjectService(req);
+export const updateSubjctController = async (req, res) => {
+	const { status, data } = await updateSubjctService(req);
 
 	return res.status(status).send(data);
 };
 
 export const deleteSubjectController = async (req, res) => {
 	const { status, data } = await deleteSubjectService(req);
-
-	return res.status(status).send(data);
-};
-
-export const insertStudentToSubjectController = async (req, res) => {
-	const { status, data } = await insertStudentInSubjectService(req);
 
 	return res.status(status).send(data);
 };

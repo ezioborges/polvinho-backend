@@ -1,5 +1,4 @@
-import { insertStudentValidate } from '../../../validation/insertStudentValidate.js';
-import User from '../../User/model/UserSchema.js';
+import { updateSubjectValidate } from '../../../validation/updateSubjectValidate.js';
 import Subject from '../model/SubjectSchema.js';
 
 export const createSubjectService = async req => {
@@ -51,91 +50,28 @@ export const getSubjectByIdService = async req => {
 	}
 };
 
-export const insertProfessorInSubjectService = async req => {
+export const updateSubjctService = async req => {
 	try {
 		const { subjectId } = req.params;
-		const { professor } = req.body;
+		const reqBody = req.body;
 
-		const subjectExists = await Subject.findById(subjectId);
-
-		if (subjectExists.professor) {
-			return {
-				status: 400,
-				data: {
-					message: 'Disciplina já possui um professor cadastrado!',
-				},
-			};
-		}
-
-		if (!subjectExists) {
-			return {
-				status: 404,
-				data: { message: 'Disciplina não cadastrada!' },
-			};
-		}
-
-		const professorExists = await User.findOne({ name: professor });
-
-		console.log('professorExists ===> ', professorExists._id);
-
-		if (!professorExists) {
-			return {
-				status: 400,
-				data: { message: `Professor "${professor}", não cadastrado` },
-			};
-		}
-
-		const updatedSubject = await Subject.findByIdAndUpdate(
+		const validation = await updateSubjectValidate(
 			subjectId,
-			{
-				professor: professorExists._id,
-				updatedAt: Date.now(),
-			},
-			{ new: true, runValidators: true },
+			reqBody.name,
+			reqBody.professor,
+			reqBody.students,
 		);
-
-		await User.findByIdAndUpdate(
-			professorExists._id,
-			{ subject: subjectId, updatedAt: Date.now() },
-			{ new: true, runValidators: true },
-		);
-
-		return { status: 200, data: updatedSubject };
-	} catch (error) {
-		return { status: 500, data: error.message };
-	}
-};
-
-export const insertStudentInSubjectService = async req => {
-	try {
-		const { subjectId } = req.params;
-
-		const validation = await insertStudentValidate(subjectId, req.body);
 
 		if (validation.status !== 200) {
 			return validation;
 		}
 
-		const studentExists = validation.data;
-
-		const updateSubject = await Subject.findByIdAndUpdate(
-			subjectId,
-			{
-				$push: { students: studentExists._id },
-				updatedAt: Date.now(),
-			},
-			{ new: true, runValidators: true },
-		).populate('students');
-
-		await User.findByIdAndUpdate(
-			studentExists._id,
-			{ subject: subjectId, updatedAt: Date.now() },
-			{ new: true, runValidators: true },
-		);
-
-		return { status: 200, data: updateSubject };
+		return {
+			status: 200,
+			data: { message: 'Disciplina atualizada com sucesso' },
+		};
 	} catch (error) {
-		return { status: 500, data: error.essage };
+		return { status: 500, data: { message: error.message } };
 	}
 };
 

@@ -127,6 +127,12 @@ export const insertStudentInSubjectService = async req => {
 			{ new: true, runValidators: true },
 		).populate('students');
 
+		await User.findByIdAndUpdate(
+			studentExists._id,
+			{ subject: subjectId, updatedAt: Date.now() },
+			{ new: true, runValidators: true },
+		);
+
 		return { status: 200, data: updateSubject };
 	} catch (error) {
 		return { status: 500, data: error.essage };

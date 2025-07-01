@@ -53,13 +53,13 @@ export const getSubjectByIdService = async req => {
 export const updateSubjctService = async req => {
 	try {
 		const { subjectId } = req.params;
-		const reqBody = req.body;
+		const { name, professor, students } = req.body;
 
 		const validation = await updateSubjectValidate(
 			subjectId,
-			reqBody.name,
-			reqBody.professor,
-			reqBody.students,
+			name,
+			professor,
+			students,
 		);
 
 		if (validation.status !== 200) {

@@ -7,16 +7,16 @@ export const createUserService = async req => {
 
 		const subjectExists = await Subject.findOne({ name: subject });
 
-		const existingUser = await User.findOne({
+		const userExists = await User.findOne({
 			$or: [
 				{ email: userData.email },
 				{ registration: userData.registration },
 			],
 		});
 
-		if (existingUser) {
+		if (userExists) {
 			let message = '';
-			if (existingUser.email === userData.email) {
+			if (userExists.email === userData.email) {
 				message = 'Já existe um usuário com este e-mail cadastrado.';
 			} else {
 				message = 'Já existe um usuário com esta matrícula cadastrada.';
@@ -31,13 +31,12 @@ export const createUserService = async req => {
 
 		await newProfessor.save();
 
-		return { status: 201, message: 'Usuário cadastrado com sucesso!' };
+		return {
+			status: 201,
+			data: { message: 'Usuário cadastrado com sucesso!' },
+		};
 	} catch (error) {
-		console.error('Erro no createUserService:', error);
-		throw new Error(
-			error.message ||
-				`Erro inesperado no serviço de criação de professor.`,
-		);
+		return { status: 500, data: { message: error.message } };
 	}
 };
 

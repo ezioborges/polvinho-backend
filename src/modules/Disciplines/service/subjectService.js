@@ -1,3 +1,4 @@
+import { insertStudentValidate } from '../../../validation/insertStudentValidate.js';
 import User from '../../User/model/UserSchema.js';
 import Subject from '../model/SubjectSchema.js';
 
@@ -53,7 +54,7 @@ export const getSubjectByIdService = async req => {
 export const insertProfessorInSubjectService = async req => {
 	try {
 		const { subjectId } = req.params;
-		const { professor, ...subjectData } = req.body;
+		const { professor } = req.body;
 
 		const subjectExists = await Subject.findById(subjectId);
 
@@ -73,8 +74,9 @@ export const insertProfessorInSubjectService = async req => {
 			};
 		}
 
-		//TODO: atualizar a rota pata que seja "/:subjectId/insert-professor"
 		const professorExists = await User.findOne({ name: professor });
+
+		console.log('professorExists ===> ', professorExists._id);
 
 		if (!professorExists) {
 			return {
@@ -86,16 +88,48 @@ export const insertProfessorInSubjectService = async req => {
 		const updatedSubject = await Subject.findByIdAndUpdate(
 			subjectId,
 			{
-				...subjectData,
 				professor: professorExists._id,
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },
 		);
 
+		await User.findByIdAndUpdate(
+			professorExists._id,
+			{ subject: subjectId, updatedAt: Date.now() },
+			{ new: true, runValidators: true },
+		);
+
 		return { status: 200, data: updatedSubject };
 	} catch (error) {
 		return { status: 500, data: error.message };
+	}
+};
+
+export const insertStudentInSubjectService = async req => {
+	try {
+		const { subjectId } = req.params;
+
+		const validation = await insertStudentValidate(subjectId, req.body);
+
+		if (validation.status !== 200) {
+			return validation;
+		}
+
+		const studentExists = validation.data;
+
+		const updateSubject = await Subject.findByIdAndUpdate(
+			subjectId,
+			{
+				$push: { students: studentExists._id },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		).populate('students');
+
+		return { status: 200, data: updateSubject };
+	} catch (error) {
+		return { status: 500, data: error.essage };
 	}
 };
 
@@ -111,65 +145,5 @@ export const deleteSubjectService = async req => {
 		return { status: 200, data: { message: 'Subject deleted' } };
 	} catch (error) {
 		return { status: 500, data: error.message };
-	}
-};
-
-export const insertStudentToSubjectService = async req => {
-	try {
-		const { subjectId } = req.params;
-		const { students } = req.body;
-		const [name] = students;
-
-		const subjectExists = await Subject.findById(subjectId);
-		const studentsArrayExists = await User.find({ role: 'aluno' });
-
-		if (studentsArrayExists.length >= 40) {
-			return {
-				status: 400,
-				data: {
-					message:
-						'A disciplina atingiu o limite permitido de 40 alunos.',
-				},
-			};
-		}
-
-		const studentExists = await User.findOne({ name: students });
-
-		console.log('students ===> ', students);
-
-		if (!studentExists) {
-			return {
-				status: 400,
-				data: {
-					message: `Não temos estudante com o nome "${name}", no nosso registro`,
-				},
-			};
-		}
-
-		const studentExistsInSubject = subjectExists.students.some(student =>
-			student.equals(studentExists._id),
-		);
-
-		if (studentExistsInSubject) {
-			return {
-				status: 400,
-				data: {
-					message: `estudante "${name}" já cadastrado na disciplina`,
-				},
-			};
-		}
-
-		const updateSubject = await Subject.findByIdAndUpdate(
-			subjectId,
-			{
-				$push: { students: studentExists._id },
-				updatedAt: Date.now(),
-			},
-			{ new: true, runValidators: true },
-		).populate('students');
-
-		return { status: 200, data: updateSubject };
-	} catch (error) {
-		return { status: 500, data: error.essage };
 	}
 };

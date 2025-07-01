@@ -7,9 +7,9 @@ import {
 } from '../service/userService.js';
 
 export const createUserController = async (req, res) => {
-	const user = await createUserService(req, res);
+	const { status, data } = await createUserService(req, res);
 
-	return res.status(user.status).send({ message: user.message });
+	return res.status(status).send(data);
 };
 
 export const getAllUsersController = async (_req, res) => {

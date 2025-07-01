@@ -3,6 +3,7 @@ import {
 	deleteSubjectService,
 	getAllSubjectsService,
 	getSubjectByIdService,
+	insertStudentToSubjectService,
 	updateSubjectService,
 } from '../service/subjectService.js';
 
@@ -32,6 +33,12 @@ export const updateSubjectController = async (req, res) => {
 
 export const deleteSubjectController = async (req, res) => {
 	const { status, data } = await deleteSubjectService(req);
+
+	return res.status(status).send(data);
+};
+
+export const insertStudentToSubjectController = async (req, res) => {
+	const { status, data } = await insertStudentToSubjectService(req);
 
 	return res.status(status).send(data);
 };

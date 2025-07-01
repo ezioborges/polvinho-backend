@@ -10,6 +10,13 @@ const SubjectSchema = new mongoose.Schema({
 		ref: 'users',
 		default: null,
 	},
+	students: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'users',
+			default: [],
+		},
+	],
 });
 
 const Subject = mongoose.model('subjects', SubjectSchema);

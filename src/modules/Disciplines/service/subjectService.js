@@ -103,3 +103,50 @@ export const deleteSubjectService = async req => {
 		return { status: 500, data: error.message };
 	}
 };
+
+export const insertStudentToSubjectService = async req => {
+	try {
+		const { subjectId } = req.params;
+		const { students } = req.body;
+		const [name] = students;
+
+		const subjectExists = await Subject.findById(subjectId);
+
+		const studentExists = await User.findOne({ name: students });
+
+		if (!studentExists) {
+			return {
+				status: 400,
+				data: {
+					message: `Não temos estudante com o nome "${name}", no nosso registro`,
+				},
+			};
+		}
+
+		const studentExistsInSubject = subjectExists.students.some(student =>
+			student.equals(studentExists._id),
+		);
+
+		if (studentExistsInSubject) {
+			return {
+				status: 400,
+				data: {
+					message: `estudante "${name}" já cadastrado na disciplina`,
+				},
+			};
+		}
+
+		const updateSubject = await Subject.findByIdAndUpdate(
+			subjectId,
+			{
+				$push: { students: studentExists._id },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		).populate('students');
+
+		return { status: 200, data: updateSubject };
+	} catch (error) {
+		return { status: 500, data: error.essage };
+	}
+};

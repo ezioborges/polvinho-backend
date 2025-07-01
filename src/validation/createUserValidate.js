@@ -23,10 +23,10 @@ export const createProfessorValidate = (req, res, next) => {
 		return res.status(400).send({ message: 'Senha é obrigatória' });
 	}
 
-	if (!role || role.trim() === '' || role !== 'professor') {
+	if (!role || role.trim() === '') {
 		return res
 			.status(400)
-			.send({ message: 'Função é obrigatória ser professor' });
+			.send({ message: 'Função é obrigatória ao cadastrar usuário' });
 	}
 
 	const validEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

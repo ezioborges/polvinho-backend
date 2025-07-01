@@ -31,7 +31,7 @@ export const createUserService = async req => {
 
 		await newProfessor.save();
 
-		return { status: 201, message: 'Professor cadastrado com sucesso!' };
+		return { status: 201, message: 'Usuário cadastrado com sucesso!' };
 	} catch (error) {
 		console.error('Erro no createUserService:', error);
 		throw new Error(

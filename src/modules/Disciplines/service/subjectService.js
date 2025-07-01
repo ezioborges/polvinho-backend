@@ -50,12 +50,21 @@ export const getSubjectByIdService = async req => {
 	}
 };
 
-export const updateSubjectService = async req => {
+export const insertProfessorInSubjectService = async req => {
 	try {
 		const { subjectId } = req.params;
 		const { professor, ...subjectData } = req.body;
 
 		const subjectExists = await Subject.findById(subjectId);
+
+		if (subjectExists.professor) {
+			return {
+				status: 400,
+				data: {
+					message: 'Disciplina já possui um professor cadastrado!',
+				},
+			};
+		}
 
 		if (!subjectExists) {
 			return {
@@ -64,11 +73,12 @@ export const updateSubjectService = async req => {
 			};
 		}
 
+		//TODO: atualizar a rota pata que seja "/:subjectId/insert-professor"
 		const professorExists = await User.findOne({ name: professor });
 
 		if (!professorExists) {
 			return {
-				status: 200,
+				status: 400,
 				data: { message: `Professor "${professor}", não cadastrado` },
 			};
 		}

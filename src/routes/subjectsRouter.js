@@ -4,8 +4,8 @@ import {
 	deleteSubjectController,
 	getAllSubjectsController,
 	getSubjectByIdController,
+	insertProfessorInSubjectController,
 	insertStudentToSubjectController,
-	updateSubjectController,
 } from '../modules/Disciplines/controller/SubjectController.js';
 import '../modules/Disciplines/model/SubjectSchema.js';
 
@@ -21,8 +21,8 @@ router.get(
 );
 
 router.put(
-	'/:subjectId',
-	async (req, res) => await updateSubjectController(req, res),
+	'/:subjectId/insert-professor',
+	async (req, res) => await insertProfessorInSubjectController(req, res),
 );
 
 router.put('/:subjectId/insert-student', async (req, res) =>

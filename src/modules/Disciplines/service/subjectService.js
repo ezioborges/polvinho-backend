@@ -111,8 +111,21 @@ export const insertStudentToSubjectService = async req => {
 		const [name] = students;
 
 		const subjectExists = await Subject.findById(subjectId);
+		const studentsArrayExists = await User.find({ role: 'aluno' });
+
+		if (studentsArrayExists.length >= 40) {
+			return {
+				status: 400,
+				data: {
+					message:
+						'A disciplina atingiu o limite permitido de 40 alunos.',
+				},
+			};
+		}
 
 		const studentExists = await User.findOne({ name: students });
+
+		console.log('students ===> ', students);
 
 		if (!studentExists) {
 			return {

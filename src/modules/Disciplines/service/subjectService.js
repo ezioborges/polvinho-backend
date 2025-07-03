@@ -4,11 +4,26 @@ import Subject from '../model/SubjectSchema.js';
 export const createSubjectService = async req => {
 	try {
 		const subjectData = req.body;
+		const professorExists = await User.findOne({
+			name: subjectData.professor,
+			role: 'professor',
+		});
 
 		const newSubject = new Subject({
 			...subjectData,
-			professor: null,
+			professor: professorExists ? professorExists._id : null,
 		});
+
+		if (professorExists) {
+			await User.findByIdAndUpdate(
+				professorExists._id,
+				{
+					subject: newSubject._id,
+					updatedAt: Date.now(),
+				},
+				{ new: true, runValidators: true },
+			);
+		}
 
 		await newSubject.save();
 
@@ -145,7 +160,10 @@ export const deleteSubjectService = async req => {
 			updatedAt: Date.now(),
 		});
 
-		return { status: 200, data: { message: 'Subject deleted' } };
+		return {
+			status: 200,
+			data: { message: 'Disciplina deletada com sucesso' },
+		};
 	} catch (error) {
 		return { status: 500, data: error.message };
 	}

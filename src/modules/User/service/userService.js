@@ -70,37 +70,31 @@ export const updateUserService = async req => {
 		const { id } = req.params;
 		const { subject, ...userData } = req.body;
 
-		const updateData = { ...userData, updatedAt: Date.now() };
+		const userExists = await User.findById(id);
 
-		const subjectExists = await Subject.findOne({ name: subject });
-
-		if (!subjectExists) {
-			const [name] = subject;
+		if (!userExists) {
 			return {
-				status: 400,
-				data: {
-					message: `Disciplina "${name}", não cadastrada `,
-				},
+				status: 404,
+				data: { message: 'Pessoa com cadastro inexistente' },
 			};
 		}
 
-		updateData.subject = subjectExists._id;
+		const subjectExists = await Subject.findOne({ name: subject });
 
-		await Subject.findByIdAndUpdate(
-			subjectExists.id,
+		await User.findByIdAndUpdate(
+			userExists._id,
 			{
-				professor: id,
+				...userData,
+				subject: subjectExists ? subjectExists._id : null,
 				updatedAt: Date.now(),
 			},
-			{ new: true },
+			{ new: true, runValidators: true },
 		);
 
-		const userUpdated = await User.findByIdAndUpdate(id, updateData, {
-			new: true,
-			runValidators: true,
-		}).populate('subject');
-
-		return { status: 200, data: userUpdated };
+		return {
+			status: 200,
+			data: { message: 'Pessoa atualizada com sucesso!' },
+		};
 	} catch (error) {
 		return { status: 500, message: error.message };
 	}

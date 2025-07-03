@@ -57,9 +57,13 @@ export const getAllUsersService = async () => {
 export const getUserByIdService = async req => {
 	try {
 		const { id } = req.params;
-		const userById = await User.findById(id);
+		const userData = await User.findById(id);
 
-		return { status: 200, data: userById };
+		if (!userData) {
+			return { status: 404, data: { message: 'Pessoa não encontrada' } };
+		}
+
+		return { status: 200, data: userData };
 	} catch (error) {
 		return { status: 404, message: error.message };
 	}
@@ -96,7 +100,10 @@ export const updateUserService = async req => {
 			data: { message: 'Pessoa atualizada com sucesso!' },
 		};
 	} catch (error) {
-		return { status: 500, message: error.message };
+		return {
+			status: 500,
+			data: { message: `Dados estão duplicados: ${error.message}` },
+		};
 	}
 };
 
@@ -113,7 +120,10 @@ export const deleteUserService = async req => {
 			{ new: true },
 		);
 
-		return { status: 200, data: { message: 'User deleted' } };
+		return {
+			status: 200,
+			data: { message: 'Pessoa excluida com sucesso!' },
+		};
 	} catch (error) {
 		return { status: 404, data: { message: error.message } };
 	}

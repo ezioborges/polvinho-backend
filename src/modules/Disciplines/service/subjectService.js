@@ -59,15 +59,14 @@ export const updateSubjctService = async req => {
 		role: 'professor',
 	});
 
-	const subjectExists = await Subject.findById(subjectId);
-
 	if (!professorExists) {
 		return { status: 404, data: { message: 'Professor não cadastrado' } };
 	}
 
-	const studentExists = await User.findOne({ name: student, role: 'aluno' });
-
+	const subjectExists = await Subject.findById(subjectId);
 	const studentList = subjectExists.students;
+
+	const studentExists = await User.findOne({ name: student, role: 'aluno' });
 
 	if (studentList > 40) {
 		return {
@@ -88,7 +87,6 @@ export const updateSubjctService = async req => {
 			data: { message: 'Estudante já possui cadastro na disciplina' },
 		};
 	}
-	console.log('🚀 ~ studentExistsInSubject:', studentExistsInSubject);
 
 	try {
 		await User.findByIdAndUpdate(

@@ -1,4 +1,4 @@
-import { updateSubjectValidate } from '../../../validation/updateSubjectValidate.js';
+import User from '../../User/model/UserSchema.js';
 import Subject from '../model/SubjectSchema.js';
 
 export const createSubjectService = async req => {
@@ -51,24 +51,87 @@ export const getSubjectByIdService = async req => {
 };
 
 export const updateSubjctService = async req => {
-	try {
-		const { subjectId } = req.params;
-		const { name, professor, students } = req.body;
+	const { subjectId } = req.params;
+	const { name, professor, student } = req.body;
 
-		const validation = await updateSubjectValidate(
-			subjectId,
-			name,
-			professor,
-			students,
+	const professorExists = await User.findOne({
+		name: professor,
+		role: 'professor',
+	});
+
+	const subjectExists = await Subject.findById(subjectId);
+
+	if (!professorExists) {
+		return { status: 404, data: { message: 'Professor não cadastrado' } };
+	}
+
+	const studentExists = await User.findOne({ name: student, role: 'aluno' });
+
+	const studentList = subjectExists.students;
+
+	if (studentList > 40) {
+		return {
+			status: 400,
+			data: {
+				message: 'Disciplina o limite de 40 estudantes cadastrados',
+			},
+		};
+	}
+
+	const studentExistsInSubject = studentList.some(student =>
+		student.equals(studentExists._id),
+	);
+
+	if (studentExistsInSubject) {
+		return {
+			status: 400,
+			data: { message: 'Estudante já possui cadastro na disciplina' },
+		};
+	}
+	console.log('🚀 ~ studentExistsInSubject:', studentExistsInSubject);
+
+	try {
+		await User.findByIdAndUpdate(
+			subjectExists.professor,
+			{
+				subject: [],
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
 		);
 
-		if (validation.status !== 200) {
-			return validation;
-		}
+		await User.findByIdAndUpdate(
+			professorExists._id,
+			{
+				subject: subjectId,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await User.findByIdAndUpdate(
+			studentExists._id,
+			{
+				subject: subjectId,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await Subject.findByIdAndUpdate(
+			subjectId,
+			{
+				name: name,
+				professor: professorExists._id,
+				$push: { students: studentExists._id },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
 
 		return {
 			status: 200,
-			data: { message: 'Disciplina atualizada com sucesso' },
+			data: { message: 'Disciplina atualizada com sucesso!' },
 		};
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };

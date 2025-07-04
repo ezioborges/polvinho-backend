@@ -56,7 +56,7 @@ export const getQuizByIdService = async req => {
 export const updateQuizService = async req => {
 	try {
 		const { quizId } = req.params;
-		const { ...quizData } = req.body;
+		const { professor, subject, ...quizData } = req.body;
 
 		const quizExists = await Quiz.findById(quizId);
 
@@ -67,9 +67,42 @@ export const updateQuizService = async req => {
 			};
 		}
 
+		const professorExists = await User.findOne({ name: professor });
+
+		const subjectExists = await Subject.findOne({ name: subject });
+
+		console.log('subjectExists ===> ', subjectExists);
+
+		// atualiza o quizz
 		await Quiz.findByIdAndUpdate(
 			quizId,
-			{ ...quizData, updateAt: Date.now() },
+			{
+				...quizData,
+				professorId: professorExists ? professorExists._id : null,
+				subjectId: subjectExists ? subjectExists._id : null,
+				updateAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		// atualiza o professor no cadastro da disciplina
+		await User.findByIdAndUpdate(
+			professorExists._id,
+			{ $push: { quizzes: quizId }, updatedAt: Date.now() },
+			{ new: true, runValidators: true },
+		);
+
+		// retira o quizz do professor que estava cadastrado na disciplina
+		await User.findByIdAndUpdate(
+			quizExists.professorId,
+			{ $pull: { quizzes: quizId }, updatedAt: Date.now() },
+			{ new: true, runValidators: true },
+		);
+
+		// atualiza a disciplina com o id do quizz
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{ $push: { quizzes: quizId }, updatedAt: Date.now() },
 			{ new: true, runValidators: true },
 		);
 

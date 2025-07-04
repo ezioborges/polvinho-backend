@@ -17,6 +17,13 @@ const SubjectSchema = new mongoose.Schema({
 			default: [],
 		},
 	],
+	quizzes: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'quizzes',
+			default: [],
+		},
+	],
 });
 
 const Subject = mongoose.model('subjects', SubjectSchema);

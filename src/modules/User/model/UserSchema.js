@@ -17,6 +17,13 @@ const UserSchema = new mongoose.Schema({
 			default: null,
 		},
 	],
+	quizzes: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'quizzes',
+			default: null,
+		},
+	],
 });
 
 // para criptografar as senhas quando o usuário é criado ou atualizado

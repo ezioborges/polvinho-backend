@@ -1,12 +1,27 @@
+import Subject from '../../Disciplines/model/SubjectSchema.js';
+import User from '../../User/model/UserSchema.js';
 import Quiz from '../model/QuizSchema.js';
 
 export const createQuizService = async req => {
-	try {
-		const { ...quizData } = req.body;
+	const { professor, subject, ...quizData } = req.body;
 
+	const professorExists = await User.findOne({
+		name: professor,
+		role: 'professor',
+	});
+
+	const subjectExists = await Subject.findOne({ name: subject });
+
+	console.log('subjectExists ===> ', subjectExists);
+
+	try {
 		const newQuiz = new Quiz({
 			...quizData,
+			professorId: professorExists ? professorExists._id : null,
+			subjectId: subjectExists ? subjectExists._id : null,
 		});
+
+		console.log('newQuiz ===> ', newQuiz);
 
 		await newQuiz.save();
 

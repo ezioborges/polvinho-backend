@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const QuizzSchema = new mongoose.Schema({
-	teacherId: {
+	professorId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'users',
 		default: null,

@@ -43,7 +43,7 @@ export const getAllSubjectsService = async () => {
 		if (!subject || subject.length === 0) {
 			return {
 				status: 404,
-				data: { message: 'Nenhuma disciplina encontrada' },
+				data: [],
 			};
 		}
 

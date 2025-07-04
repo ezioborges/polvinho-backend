@@ -35,6 +35,10 @@ export const getAllQuizzesService = async () => {
 	try {
 		const quizzes = await Quiz.find();
 
+		if (!quizzes || quizzes.length === 0) {
+			return { status: 404, data: [] };
+		}
+
 		return { status: 200, data: quizzes };
 	} catch (error) {
 		return { status: 500, date: { message: error.message } };

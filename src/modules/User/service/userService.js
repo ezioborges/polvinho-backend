@@ -45,7 +45,7 @@ export const getAllUsersService = async () => {
 		const users = await User.find();
 
 		if (!users || users.length === 0) {
-			return { status: 400, message: 'Nenhum usuário encontrado.' };
+			return { status: 404, data: [] };
 		}
 
 		return { status: 200, data: users };

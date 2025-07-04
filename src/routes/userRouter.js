@@ -19,25 +19,25 @@ router.post('/', adminValidateJWT, createProfessorValidate, async (req, res) =>
 
 router.get(
 	'/',
-	adminValidateJWT,
+	// adminValidateJWT,
 	async (req, res) => await getAllUsersController(req, res),
 );
 
 router.get(
 	'/:id',
-	adminValidateJWT,
+	// adminValidateJWT,
 	async (req, res) => await getUserByIdController(req, res),
 );
 
 router.put(
 	'/:id',
-	adminValidateJWT,
+	// adminValidateJWT,
 	async (req, res) => await updateUserController(req, res),
 );
 
 router.delete(
 	'/:id',
-	adminValidateJWT,
+	// adminValidateJWT,
 	async (req, res) => await deleteUserController(req, res),
 );
 

@@ -26,7 +26,7 @@ export const createUserService = async req => {
 
 		const newProfessor = new User({
 			...userData,
-			subject: subjectExists ? subjectExists._id : null,
+			subject: subjectExists ? subjectExists._id : [],
 		});
 
 		await newProfessor.save();
@@ -89,7 +89,7 @@ export const updateUserService = async req => {
 			userExists._id,
 			{
 				...userData,
-				subject: subjectExists ? subjectExists._id : null,
+				subject: subjectExists ? subjectExists._id : [],
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },

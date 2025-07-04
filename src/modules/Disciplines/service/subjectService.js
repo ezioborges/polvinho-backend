@@ -49,7 +49,7 @@ export const getAllSubjectsService = async () => {
 
 		return { status: 200, data: subject };
 	} catch (error) {
-		return { status: 500, mesdayasage: error.message };
+		return { status: 500, data: { message: error.message } };
 	}
 };
 
@@ -61,7 +61,7 @@ export const getSubjectByIdService = async req => {
 
 		return { status: 200, data: subjectById };
 	} catch (error) {
-		return { status: 500, data: error.message };
+		return { status: 500, data: { message: error.message } };
 	}
 };
 
@@ -82,6 +82,10 @@ export const updateSubjctService = async req => {
 	const studentList = subjectExists.students;
 
 	const studentExists = await User.findOne({ name: student, role: 'aluno' });
+
+	if (!studentExists) {
+		return { status: 404, data: { messgae: 'Estudante sem cadastro' } };
+	}
 
 	if (studentList > 40) {
 		return {
@@ -165,6 +169,6 @@ export const deleteSubjectService = async req => {
 			data: { message: 'Disciplina deletada com sucesso' },
 		};
 	} catch (error) {
-		return { status: 500, data: error.message };
+		return { status: 500, data: { message: error.message } };
 	}
 };

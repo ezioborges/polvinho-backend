@@ -22,6 +22,6 @@ const QuizzSchema = new mongoose.Schema({
 	isDeleted: { type: Boolean, default: false },
 });
 
-const Quizz = mongoose.model('quizzes', QuizzSchema);
+const Quiz = mongoose.model('quizzes', QuizzSchema);
 
-export default Quizz;
+export default Quiz;

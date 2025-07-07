@@ -5,7 +5,11 @@ export const createUserService = async req => {
 	try {
 		const userData = req.body;
 
-		console.log('userData ===> ', userData);
+		const newUSer = new User({
+			...userData,
+		});
+
+		await newUSer.save();
 
 		return {
 			status: 201,

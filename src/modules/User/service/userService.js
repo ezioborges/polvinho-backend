@@ -29,6 +29,15 @@ export const createUserService = async req => {
 			subject: subjectExists ? subjectExists._id : [],
 		});
 
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{
+				professor: newProfessor._id,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
 		await newProfessor.save();
 
 		return {

@@ -4,26 +4,10 @@ import Subject from '../model/SubjectSchema.js';
 export const createSubjectService = async req => {
 	try {
 		const subjectData = req.body;
-		const professorExists = await User.findOne({
-			name: subjectData.professor,
-			role: 'professor',
-		});
 
 		const newSubject = new Subject({
 			...subjectData,
-			professor: professorExists ? professorExists._id : null,
 		});
-
-		if (professorExists) {
-			await User.findByIdAndUpdate(
-				professorExists._id,
-				{
-					subject: newSubject._id,
-					updatedAt: Date.now(),
-				},
-				{ new: true, runValidators: true },
-			);
-		}
 
 		await newSubject.save();
 

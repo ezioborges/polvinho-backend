@@ -1,5 +1,5 @@
 export const createUserValidate = (req, res, next) => {
-	const { name, email, registration, passwordHash, role } = req.body;
+	const { name, email, registration, role } = req.body;
 
 	if (!name || name.trim() === '') {
 		return res.status(400).send({ message: 'Nome é obrigatório!' });
@@ -19,10 +19,6 @@ export const createUserValidate = (req, res, next) => {
 			.send({ message: 'Matrícula deve ter pelo menos 6 caracteres' });
 	}
 
-	if (!passwordHash || passwordHash.trim() === '') {
-		return res.status(400).send({ message: 'Senha é obrigatória' });
-	}
-
 	if (!role || role.trim() === '') {
 		return res
 			.status(400)
@@ -33,15 +29,6 @@ export const createUserValidate = (req, res, next) => {
 	if (!validEmailRegex.test(email)) {
 		return res.status(400).send({
 			message: 'Email inválido',
-		});
-	}
-
-	const validPassword =
-		/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+={}[\]|\\:;"'<>,.?/~`-])[A-Za-z\d!@#$%^&*()_+={}[\]|\\:;"'<>,.?/~`-]{6,}$/;
-	if (!validPassword.test(passwordHash)) {
-		return res.status(400).send({
-			message:
-				'Senha inválida. Deve conter pelo menos 6 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.',
 		});
 	}
 

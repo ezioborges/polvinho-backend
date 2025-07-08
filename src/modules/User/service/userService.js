@@ -1,45 +1,6 @@
 import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../model/UserSchema.js';
 
-export const createUserService = async req => {
-	try {
-		const { subject, ...userData } = req.body;
-
-		const subjectExists = await Subject.findOne({ name: subject });
-
-		const userExists = await User.findOne({
-			$or: [
-				{ email: userData.email },
-				{ registration: userData.registration },
-			],
-		});
-
-		if (userExists) {
-			let message = '';
-			if (userExists.email === userData.email) {
-				message = 'Já existe um usuário com este e-mail cadastrado.';
-			} else {
-				message = 'Já existe um usuário com esta matrícula cadastrada.';
-			}
-			return { status: 400, message };
-		}
-
-		const newProfessor = new User({
-			...userData,
-			subject: subjectExists ? subjectExists._id : [],
-		});
-
-		await newProfessor.save();
-
-		return {
-			status: 201,
-			data: { message: 'Usuário cadastrado com sucesso!' },
-		};
-	} catch (error) {
-		return { status: 500, data: { message: error.message } };
-	}
-};
-
 export const createProfessorService = async req => {
 	const reqBody = req.body;
 
@@ -134,6 +95,84 @@ export const updateProfessorService = async req => {
 		return {
 			status: 200,
 			data: { message: 'Professor Atualizado com sucesso' },
+		};
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
+export const deleteProfessorService = async req => {
+	const { professorId } = req.params;
+
+	const professorExists = await User.findById(professorId);
+	const [subjectId] = professorExists.subject;
+
+	const subjectExists = await Subject.findById(subjectId);
+
+	try {
+		console.log('professorId', subjectId);
+		console.log('subjectExists', subjectExists);
+
+		await User.findByIdAndUpdate(
+			professorExists._id,
+			{
+				isDeleted: true,
+				subject: [],
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{
+				professor: null,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+		return {
+			status: 200,
+			data: { message: 'Professor deletado com sucesso!' },
+		};
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
+export const createUserService = async req => {
+	try {
+		const { subject, ...userData } = req.body;
+
+		const subjectExists = await Subject.findOne({ name: subject });
+
+		const userExists = await User.findOne({
+			$or: [
+				{ email: userData.email },
+				{ registration: userData.registration },
+			],
+		});
+
+		if (userExists) {
+			let message = '';
+			if (userExists.email === userData.email) {
+				message = 'Já existe um usuário com este e-mail cadastrado.';
+			} else {
+				message = 'Já existe um usuário com esta matrícula cadastrada.';
+			}
+			return { status: 400, message };
+		}
+
+		const newProfessor = new User({
+			...userData,
+			subject: subjectExists ? subjectExists._id : [],
+		});
+
+		await newProfessor.save();
+
+		return {
+			status: 201,
+			data: { message: 'Usuário cadastrado com sucesso!' },
 		};
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };

@@ -4,6 +4,7 @@ import '../modules/User/model/UserSchema.js';
 import {
 	createProfessorController,
 	createUserController,
+	deleteProfessorController,
 	deleteUserController,
 	getAllProfessorsController,
 	getAllUsersController,
@@ -29,6 +30,11 @@ router.get(
 router.put(
 	'/professors/:professorId',
 	async (req, res) => await updateProfessorController(req, res),
+);
+
+router.delete(
+	'/professors/:professorId',
+	async (req, res) => await deleteProfessorController(req, res),
 );
 
 router.get(

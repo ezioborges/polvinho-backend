@@ -5,6 +5,7 @@ import {
 	createProfessorController,
 	createUserController,
 	deleteUserController,
+	getAllProfessorsController,
 	getAllUsersController,
 	getUserByIdController,
 	updateUserController,
@@ -17,6 +18,11 @@ router.post('/', async (req, res) => createUserController(req, res));
 
 router.post('/professor', createUserValidate, async (req, res) =>
 	createProfessorController(req, res),
+);
+
+router.get(
+	'/professors',
+	async (req, res) => await getAllProfessorsController(req, res),
 );
 
 router.get(

@@ -78,6 +78,16 @@ export const createProfessorService = async req => {
 	}
 };
 
+export const getAllProfessorsService = async () => {
+	try {
+		const professors = await User.find({ role: 'professor' });
+
+		return { status: 200, data: professors };
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
 export const getAllUsersService = async () => {
 	try {
 		const users = await User.find();

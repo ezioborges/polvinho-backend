@@ -1,4 +1,4 @@
-export const createProfessorValidate = (req, res, next) => {
+export const createUserValidate = (req, res, next) => {
 	const { name, email, registration, passwordHash, role } = req.body;
 
 	if (!name || name.trim() === '') {

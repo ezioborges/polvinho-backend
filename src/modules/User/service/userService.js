@@ -40,6 +40,44 @@ export const createUserService = async req => {
 	}
 };
 
+export const createProfessorService = async req => {
+	const reqBody = req.body;
+
+	const subjectExists = await Subject.findOne({ name: reqBody.subject });
+
+	if (!subjectExists) {
+		return {
+			status: 400,
+			data: { message: 'Disciplina não consta no cadastro!' },
+		};
+	}
+	const newProfessor = new User({
+		...reqBody,
+		subject: subjectExists ? subjectExists._id : [],
+	});
+
+	if (subjectExists) {
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{
+				professor: newProfessor._id,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+	}
+
+	try {
+		await newProfessor.save();
+		return {
+			status: 201,
+			data: { message: 'Professor criado com sucesso!' },
+		};
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
 export const getAllUsersService = async () => {
 	try {
 		const users = await User.find();

@@ -1,20 +1,22 @@
 import express from 'express';
 import '../modules/User/model/UserSchema.js';
 
-import { adminValidateJWT } from '../auth/validateJWT.js';
 import {
+	createProfessorController,
 	createUserController,
 	deleteUserController,
 	getAllUsersController,
 	getUserByIdController,
 	updateUserController,
 } from '../modules/User/controller/userController.js';
-import { createProfessorValidate } from '../validation/createUserValidate.js';
+import { createUserValidate } from '../validation/createUserValidate.js';
 
 const router = express.Router();
 
-router.post('/', adminValidateJWT, createProfessorValidate, async (req, res) =>
-	createUserController(req, res),
+router.post('/', async (req, res) => createUserController(req, res));
+
+router.post('/professor', createUserValidate, async (req, res) =>
+	createProfessorController(req, res),
 );
 
 router.get(

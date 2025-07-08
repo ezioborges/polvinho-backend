@@ -1,4 +1,5 @@
 import {
+	createProfessorService,
 	createUserService,
 	deleteUserService,
 	getAllUsersService,
@@ -8,6 +9,12 @@ import {
 
 export const createUserController = async (req, res) => {
 	const { status, data } = await createUserService(req, res);
+
+	return res.status(status).send(data);
+};
+
+export const createProfessorController = async (req, res) => {
+	const { status, data } = await createProfessorService(req);
 
 	return res.status(status).send(data);
 };

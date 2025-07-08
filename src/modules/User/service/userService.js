@@ -88,6 +88,58 @@ export const getAllProfessorsService = async () => {
 	}
 };
 
+export const updateProfessorService = async req => {
+	const { professorId } = req.params;
+	const { subject, ...reqBody } = req.body;
+
+	const professorExist = await User.findById(professorId);
+
+	if (!professorExist) {
+		return { status: 404, data: { message: 'Professor não encontrado!' } };
+	}
+
+	const subjectExists = await Subject.findOne({ name: subject });
+
+	console.log('subjectExists', subjectExists);
+
+	try {
+		await User.findByIdAndUpdate(
+			subjectExists.professor,
+			{
+				subject: [],
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await User.findByIdAndUpdate(
+			professorExist._id,
+			{
+				...reqBody,
+				subject: subjectExists._id,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{
+				professor: professorExist._id,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		return {
+			status: 200,
+			data: { message: 'Professor Atualizado com sucesso' },
+		};
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
 export const getAllUsersService = async () => {
 	try {
 		const users = await User.find();

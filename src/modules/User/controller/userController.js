@@ -5,6 +5,7 @@ import {
 	getAllProfessorsService,
 	getAllUsersService,
 	getUserByIdService,
+	updateProfessorService,
 	updateUserService,
 } from '../service/userService.js';
 
@@ -22,6 +23,12 @@ export const createProfessorController = async (req, res) => {
 
 export const getAllProfessorsController = async (req, res) => {
 	const { status, data } = await getAllProfessorsService(req);
+
+	return res.status(status).send(data);
+};
+
+export const updateProfessorController = async (req, res) => {
+	const { status, data } = await updateProfessorService(req);
 
 	return res.status(status).send(data);
 };

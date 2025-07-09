@@ -114,28 +114,31 @@ export const deleteProfessorService = async req => {
 	const { professorId } = req.params;
 
 	const professorExists = await User.findById(professorId);
-	const [subjectId] = professorExists.subject;
+	const subjectId = professorExists.subject;
 
 	const subjectExists = await Subject.findById(subjectId);
 
 	try {
-		console.log('professorId', subjectId);
-		console.log('subjectExists', subjectExists);
+		if (
+			professorExists.subject.length > 0 &&
+			professorExists._id.toString() ===
+				subjectExists.professor.toString()
+		) {
+			await Subject.findByIdAndUpdate(
+				subjectExists._id,
+				{
+					updatedAt: Date.now(),
+					professor: null,
+				},
+				{ new: true, runValidators: true },
+			);
+		}
 
 		await User.findByIdAndUpdate(
 			professorExists._id,
 			{
 				isDeleted: true,
 				subject: [],
-				updatedAt: Date.now(),
-			},
-			{ new: true, runValidators: true },
-		);
-
-		await Subject.findByIdAndUpdate(
-			subjectExists._id,
-			{
-				professor: null,
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },

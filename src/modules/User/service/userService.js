@@ -49,6 +49,17 @@ export const getAllProfessorsService = async () => {
 	}
 };
 
+export const getProfessorByIdService = async req => {
+	const { professorId } = req.params;
+	try {
+		const professorData = await User.findById(professorId);
+
+		return { status: 200, data: professorData };
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
 export const updateProfessorService = async req => {
 	const { professorId } = req.params;
 	const { subject, ...reqBody } = req.body;
@@ -60,8 +71,6 @@ export const updateProfessorService = async req => {
 	}
 
 	const subjectExists = await Subject.findOne({ name: subject });
-
-	console.log('subjectExists', subjectExists);
 
 	try {
 		await User.findByIdAndUpdate(

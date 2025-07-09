@@ -5,6 +5,7 @@ import {
 	deleteUserService,
 	getAllProfessorsService,
 	getAllUsersService,
+	getProfessorByIdService,
 	getUserByIdService,
 	updateProfessorService,
 	updateUserService,
@@ -18,6 +19,12 @@ export const createProfessorController = async (req, res) => {
 
 export const getAllProfessorsController = async (req, res) => {
 	const { status, data } = await getAllProfessorsService(req);
+
+	return res.status(status).send(data);
+};
+
+export const getProfessorByIdController = async (req, res) => {
+	const { status, data } = await getProfessorByIdService(req);
 
 	return res.status(status).send(data);
 };

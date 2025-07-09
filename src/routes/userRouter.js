@@ -8,6 +8,7 @@ import {
 	deleteUserController,
 	getAllProfessorsController,
 	getAllUsersController,
+	getProfessorByIdController,
 	getUserByIdController,
 	updateProfessorController,
 	updateUserController,
@@ -25,6 +26,11 @@ router.post('/professors', createUserValidate, async (req, res) =>
 router.get(
 	'/professors',
 	async (req, res) => await getAllProfessorsController(req, res),
+);
+
+router.get(
+	'/professors/:professorId',
+	async (req, res) => await getProfessorByIdController(req, res),
 );
 
 router.put(

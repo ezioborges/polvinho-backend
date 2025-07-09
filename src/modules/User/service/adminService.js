@@ -192,3 +192,24 @@ export const createStudentService = async req => {
 		return { status: 500, data: { message: error.message } };
 	}
 };
+
+export const getAllStudentsService = async () => {
+	try {
+		const students = await User.find({ role: 'aluno' });
+
+		return { status: 200, data: students };
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
+export const getStudentByIdService = async req => {
+	const { studentId } = req.params;
+
+	const studentExists = await User.findById(studentId);
+	try {
+		return { status: 200, data: studentExists };
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};

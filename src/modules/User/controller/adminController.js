@@ -3,7 +3,9 @@ import {
 	createStudentService,
 	deleteProfessorService,
 	getAllProfessorsService,
+	getAllStudentsService,
 	getProfessorByIdService,
+	getStudentByIdService,
 	updateProfessorService,
 } from '../service/adminService.js';
 
@@ -41,6 +43,18 @@ export const deleteProfessorController = async (req, res) => {
 // CRUD ADMIN - STUDENT
 export const createStudentController = async (req, res) => {
 	const { status, data } = await createStudentService(req);
+
+	return res.status(status).send(data);
+};
+
+export const getAllStudentsController = async (req, res) => {
+	const { status, data } = await getAllStudentsService(req);
+
+	return res.status(status).send(data);
+};
+
+export const getStudentByIdController = async (req, res) => {
+	const { status, data } = await getStudentByIdService(req);
 
 	return res.status(status).send(data);
 };

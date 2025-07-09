@@ -6,7 +6,9 @@ import {
 	createStudentController,
 	deleteProfessorController,
 	getAllProfessorsController,
+	getAllStudentsController,
 	getProfessorByIdController,
+	getStudentByIdController,
 	updateProfessorController,
 } from '../modules/User/controller/adminController.js';
 import { createUserValidate } from '../validation/createUserValidate.js';
@@ -43,6 +45,16 @@ router.post(
 	'/students',
 	createUserValidate,
 	async (req, res) => await createStudentController(req, res),
+);
+
+router.get(
+	'/students',
+	async (req, res) => await getAllStudentsController(req, res),
+);
+
+router.get(
+	'/students/:studentId',
+	async (req, res) => await getStudentByIdController(req, res),
 );
 
 export default router;

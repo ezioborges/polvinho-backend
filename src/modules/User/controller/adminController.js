@@ -1,16 +1,13 @@
 import {
 	createProfessorService,
-	createUserService,
+	createStudentService,
 	deleteProfessorService,
-	deleteUserService,
 	getAllProfessorsService,
-	getAllUsersService,
 	getProfessorByIdService,
-	getUserByIdService,
 	updateProfessorService,
-	updateUserService,
-} from '../service/userService.js';
+} from '../service/adminService.js';
 
+// CRUD ADMIN - PROFESSOR
 export const createProfessorController = async (req, res) => {
 	const { status, data } = await createProfessorService(req);
 
@@ -41,32 +38,9 @@ export const deleteProfessorController = async (req, res) => {
 	return res.status(status).send(data);
 };
 
-export const createUserController = async (req, res) => {
-	const { status, data } = await createUserService(req, res);
+// CRUD ADMIN - STUDENT
+export const createStudentController = async (req, res) => {
+	const { status, data } = await createStudentService(req);
 
 	return res.status(status).send(data);
-};
-
-export const getAllUsersController = async (_req, res) => {
-	const users = await getAllUsersService();
-
-	return res.status(users.status).send({ usersList: users.data });
-};
-
-export const getUserByIdController = async (req, res) => {
-	const { status, data } = await getUserByIdService(req);
-
-	return res.status(status).send(data);
-};
-
-export const updateUserController = async (req, res) => {
-	const service = await updateUserService(req);
-
-	return res.status(service.status).send(service.data);
-};
-
-export const deleteUserController = async (req, res) => {
-	const service = await deleteUserService(req);
-
-	return res.status(service.status).send(service.data);
 };

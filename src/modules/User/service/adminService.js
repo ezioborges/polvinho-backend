@@ -1,6 +1,7 @@
 import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../model/UserSchema.js';
 
+// CRUD ADMIN - PROFESSOR
 export const createProfessorService = async req => {
 	const reqBody = req.body;
 
@@ -152,130 +153,42 @@ export const deleteProfessorService = async req => {
 	}
 };
 
-export const createUserService = async req => {
-	try {
-		const { subject, ...userData } = req.body;
+// CRUD ADMIN - STUDENT
+export const createStudentService = async req => {
+	const { subject, ...studentData } = req.body;
+	const subjectExists = await Subject.findOne({ name: subject });
 
-		const subjectExists = await Subject.findOne({ name: subject });
-
-		const userExists = await User.findOne({
-			$or: [
-				{ email: userData.email },
-				{ registration: userData.registration },
-			],
-		});
-
-		if (userExists) {
-			let message = '';
-			if (userExists.email === userData.email) {
-				message = 'Já existe um usuário com este e-mail cadastrado.';
-			} else {
-				message = 'Já existe um usuário com esta matrícula cadastrada.';
-			}
-			return { status: 400, message };
-		}
-
-		const newProfessor = new User({
-			...userData,
-			subject: subjectExists ? subjectExists._id : [],
-		});
-
-		await newProfessor.save();
-
+	if (!subjectExists) {
 		return {
-			status: 201,
-			data: { message: 'Usuário cadastrado com sucesso!' },
+			status: 400,
+			data: {
+				message:
+					'Estudantes devem ser cadastrados em disciplinas existentes!',
+			},
 		};
-	} catch (error) {
-		return { status: 500, data: { message: error.message } };
 	}
-};
 
-export const getAllUsersService = async () => {
 	try {
-		const users = await User.find();
+		const newStudent = new User({
+			...studentData,
+			subject: subjectExists._id,
+		});
 
-		if (!users || users.length === 0) {
-			return { status: 404, data: [] };
-		}
+		await newStudent.save();
 
-		return { status: 200, data: users };
-	} catch (error) {
-		return { status: 404, message: error.message };
-	}
-};
-
-export const getUserByIdService = async req => {
-	try {
-		const { id } = req.params;
-		const userData = await User.findById(id);
-
-		if (!userData) {
-			return { status: 404, data: { message: 'Pessoa não encontrada' } };
-		}
-
-		return { status: 200, data: userData };
-	} catch (error) {
-		return { status: 404, message: error.message };
-	}
-};
-
-export const updateUserService = async req => {
-	try {
-		const { id } = req.params;
-		const { subject, ...userData } = req.body;
-
-		const userExists = await User.findById(id);
-
-		if (!userExists) {
-			return {
-				status: 404,
-				data: { message: 'Pessoa com cadastro inexistente' },
-			};
-		}
-
-		const subjectExists = await Subject.findOne({ name: subject });
-
-		await User.findByIdAndUpdate(
-			userExists._id,
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
 			{
-				...userData,
-				subject: subjectExists ? subjectExists._id : [],
+				$push: { students: newStudent._id },
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },
 		);
-
 		return {
-			status: 200,
-			data: { message: 'Pessoa atualizada com sucesso!' },
+			status: 201,
+			data: { message: 'Estudante criado com sucesso!' },
 		};
 	} catch (error) {
-		return {
-			status: 500,
-			data: { message: `Dados estão duplicados: ${error.message}` },
-		};
-	}
-};
-
-export const deleteUserService = async req => {
-	try {
-		const { id } = req.params;
-
-		await User.findByIdAndUpdate(
-			id,
-			{
-				isDeleted: true,
-				updatedAt: Date.now(),
-			},
-			{ new: true },
-		);
-
-		return {
-			status: 200,
-			data: { message: 'Pessoa excluida com sucesso!' },
-		};
-	} catch (error) {
-		return { status: 404, data: { message: error.message } };
+		return { status: 500, data: { message: error.message } };
 	}
 };

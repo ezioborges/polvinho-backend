@@ -10,6 +10,7 @@ import {
 	getProfessorByIdController,
 	getStudentByIdController,
 	updateProfessorController,
+	updateStudentController,
 } from '../modules/User/controller/adminController.js';
 import { createUserValidate } from '../validation/createUserValidate.js';
 
@@ -55,6 +56,11 @@ router.get(
 router.get(
 	'/students/:studentId',
 	async (req, res) => await getStudentByIdController(req, res),
+);
+
+router.put(
+	'/students/:studentId',
+	async (req, res) => await updateStudentController(req, res),
 );
 
 export default router;

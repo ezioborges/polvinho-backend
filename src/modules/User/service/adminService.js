@@ -213,3 +213,47 @@ export const getStudentByIdService = async req => {
 		return { status: 500, data: { message: error.message } };
 	}
 };
+
+export const updateStudentService = async req => {
+	const { studentId } = req.params;
+	const { subject, ...studentData } = req.body;
+
+	const studentExists = await User.findById(studentId);
+
+	if (!studentExists) {
+		return { status: 404, data: { message: 'Estudante não encontrado' } };
+	}
+
+	const subjectExists = await Subject.findOne({ name: subject });
+
+	if (!subjectExists) {
+		return { status: 404, data: { message: 'Disciplina não encontrada' } };
+	}
+
+	try {
+		await User.findByIdAndUpdate(
+			studentExists._id,
+			{
+				...studentData,
+				$addToSet: { subject: subjectExists._id },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{
+				$addToSet: { students: studentExists._id },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+		return {
+			status: 200,
+			data: { message: 'Estudante atualizado com sucesso' },
+		};
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};

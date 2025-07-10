@@ -257,3 +257,47 @@ export const updateStudentService = async req => {
 		return { status: 500, data: { message: error.message } };
 	}
 };
+
+export const deleteStudentService = async req => {
+	const { studentId } = req.params;
+
+	const studentExists = await User.findById(studentId);
+
+	if (!studentExists) {
+		return {
+			status: 404,
+			data: { message: 'Não foipossivel encontrar estudante' },
+		};
+	}
+
+	const allSubjects = await Subject.find();
+
+	console.log('🚀 ~ subjecstStudents:', allSubjects);
+
+	try {
+		await Subject.updateMany(
+			{ students: studentId },
+			{
+				$pull: { students: studentId },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		await User.findByIdAndUpdate(
+			studentExists._id,
+			{
+				isDeleted: true,
+				subject: [],
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+		return {
+			status: 200,
+			data: { message: 'Estudante deletado com sucesso' },
+		};
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};

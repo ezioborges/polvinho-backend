@@ -2,6 +2,7 @@ import {
 	createProfessorService,
 	createStudentService,
 	deleteProfessorService,
+	deleteStudentService,
 	getAllProfessorsService,
 	getAllStudentsService,
 	getProfessorByIdService,
@@ -62,6 +63,12 @@ export const getStudentByIdController = async (req, res) => {
 
 export const updateStudentController = async (req, res) => {
 	const { status, data } = await updateStudentService(req);
+
+	return res.status(status).send(data);
+};
+
+export const deleteStudentController = async (req, res) => {
+	const { status, data } = await deleteStudentService(req);
 
 	return res.status(status).send(data);
 };

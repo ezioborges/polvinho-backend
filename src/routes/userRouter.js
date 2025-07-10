@@ -5,6 +5,7 @@ import {
 	createProfessorController,
 	createStudentController,
 	deleteProfessorController,
+	deleteStudentController,
 	getAllProfessorsController,
 	getAllStudentsController,
 	getProfessorByIdController,
@@ -61,6 +62,11 @@ router.get(
 router.put(
 	'/students/:studentId',
 	async (req, res) => await updateStudentController(req, res),
+);
+
+router.delete(
+	'/students/:studentId',
+	async (req, res) => await deleteStudentController(req, res),
 );
 
 export default router;

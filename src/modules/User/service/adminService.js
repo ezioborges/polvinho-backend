@@ -1,6 +1,16 @@
 import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../model/UserSchema.js';
 
+export const getAllUsersService = async () => {
+	try {
+		const users = await User.find();
+
+		return { status: 200, data: users };
+	} catch (error) {
+		return { status: 500, data: { message: error.message } };
+	}
+};
+
 // CRUD ADMIN - PROFESSOR
 export const createProfessorService = async req => {
 	try {

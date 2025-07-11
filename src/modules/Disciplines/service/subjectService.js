@@ -5,6 +5,12 @@ export const createSubjectService = async req => {
 	try {
 		const subjectData = req.body;
 
+		const subjectExists = await Subject.findOne({ name: subjectData.name });
+
+		if (subjectExists !== null) {
+			return { status: 400, message: 'Disciplina já cadastrada!' };
+		}
+
 		const newSubject = new Subject({
 			...subjectData,
 		});
@@ -16,7 +22,7 @@ export const createSubjectService = async req => {
 			message: 'Disciplina criada com sucesso!',
 		};
 	} catch (error) {
-		return { status: 500, data: { message: error.message } };
+		return { status: 500, message: error.message };
 	}
 };
 

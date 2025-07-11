@@ -20,9 +20,6 @@ export const createQuizService = async req => {
 			professorId: professorExists ? professorExists._id : null,
 			subjectId: subjectExists ? subjectExists._id : null,
 		});
-
-		console.log('newQuiz ===> ', newQuiz);
-
 		await newQuiz.save();
 
 		return { status: 201, data: { message: 'Quiz criado com sucesso!' } };

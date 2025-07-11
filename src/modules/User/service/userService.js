@@ -3,33 +3,13 @@ import User from '../model/UserSchema.js';
 
 export const createUserService = async req => {
 	try {
-		const { subject, ...userData } = req.body;
+		const userData = req.body;
 
-		const subjectExists = await Subject.findOne({ name: subject });
-
-		const userExists = await User.findOne({
-			$or: [
-				{ email: userData.email },
-				{ registration: userData.registration },
-			],
-		});
-
-		if (userExists) {
-			let message = '';
-			if (userExists.email === userData.email) {
-				message = 'Já existe um usuário com este e-mail cadastrado.';
-			} else {
-				message = 'Já existe um usuário com esta matrícula cadastrada.';
-			}
-			return { status: 400, message };
-		}
-
-		const newProfessor = new User({
+		const newUSer = new User({
 			...userData,
-			subject: subjectExists ? subjectExists._id : [],
 		});
 
-		await newProfessor.save();
+		await newUSer.save();
 
 		return {
 			status: 201,

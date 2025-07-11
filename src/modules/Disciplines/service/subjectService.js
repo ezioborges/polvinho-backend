@@ -8,7 +8,8 @@ export const createSubjectService = async req => {
 		const subjectExists = await Subject.findOne({ name: subjectData.name });
 
 		if (subjectExists !== null) {
-			return { status: 400, message: 'Disciplina já cadastrada!' };
+			// quando uma rota não existir retornar status 404
+			return { status: 404, message: 'Disciplina já cadastrada!' };
 		}
 
 		const newSubject = new Subject({
@@ -56,48 +57,54 @@ export const getSubjectByIdService = async req => {
 };
 
 export const updateSubjctService = async req => {
-	const { subjectId } = req.params;
-	const { name, professor, student } = req.body;
-
-	const professorExists = await User.findOne({
-		name: professor,
-		role: 'professor',
-	});
-
-	if (!professorExists) {
-		return { status: 404, data: { message: 'Professor não cadastrado' } };
-	}
-
-	const subjectExists = await Subject.findById(subjectId);
-	const studentList = subjectExists.students;
-
-	const studentExists = await User.findOne({ name: student, role: 'aluno' });
-
-	if (!studentExists) {
-		return { status: 404, data: { messgae: 'Estudante sem cadastro' } };
-	}
-
-	if (studentList > 40) {
-		return {
-			status: 400,
-			data: {
-				message: 'Disciplina o limite de 40 estudantes cadastrados',
-			},
-		};
-	}
-
-	const studentExistsInSubject = studentList.some(student =>
-		student.equals(studentExists._id),
-	);
-
-	if (studentExistsInSubject) {
-		return {
-			status: 400,
-			data: { message: 'Estudante já possui cadastro na disciplina' },
-		};
-	}
-
 	try {
+		const { subjectId } = req.params;
+		const { name, professor, student } = req.body;
+
+		const professorExists = await User.findOne({
+			name: professor,
+			role: 'professor',
+		});
+
+		if (!professorExists) {
+			return {
+				status: 404,
+				data: { message: 'Professor não cadastrado' },
+			};
+		}
+
+		const subjectExists = await Subject.findById(subjectId);
+		const studentList = subjectExists.students;
+
+		const studentExists = await User.findOne({
+			name: student,
+			role: 'aluno',
+		});
+
+		if (!studentExists) {
+			return { status: 404, data: { messgae: 'Estudante sem cadastro' } };
+		}
+
+		if (studentList > 40) {
+			return {
+				status: 400,
+				data: {
+					message: 'Disciplina o limite de 40 estudantes cadastrados',
+				},
+			};
+		}
+
+		const studentExistsInSubject = studentList.some(student =>
+			student.equals(studentExists._id),
+		);
+
+		if (studentExistsInSubject) {
+			return {
+				status: 400,
+				data: { message: 'Estudante já possui cadastro na disciplina' },
+			};
+		}
+
 		await User.findByIdAndUpdate(
 			subjectExists.professor,
 			{

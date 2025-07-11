@@ -3,33 +3,33 @@ import User from '../model/UserSchema.js';
 
 // CRUD ADMIN - PROFESSOR
 export const createProfessorService = async req => {
-	const reqBody = req.body;
-
-	const subjectExists = await Subject.findOne({ name: reqBody.subject });
-
-	if (!subjectExists) {
-		return {
-			status: 400,
-			data: { message: 'Disciplina não consta no cadastro!' },
-		};
-	}
-	const newProfessor = new User({
-		...reqBody,
-		subject: subjectExists ? subjectExists._id : [],
-	});
-
-	if (subjectExists) {
-		await Subject.findByIdAndUpdate(
-			subjectExists._id,
-			{
-				professor: newProfessor._id,
-				updatedAt: Date.now(),
-			},
-			{ new: true, runValidators: true },
-		);
-	}
-
 	try {
+		const reqBody = req.body;
+
+		const subjectExists = await Subject.findOne({ name: reqBody.subject });
+
+		if (!subjectExists) {
+			return {
+				status: 400,
+				data: { message: 'Disciplina não consta no cadastro!' },
+			};
+		}
+		const newProfessor = new User({
+			...reqBody,
+			subject: subjectExists ? subjectExists._id : [],
+		});
+
+		if (subjectExists) {
+			await Subject.findByIdAndUpdate(
+				subjectExists._id,
+				{
+					professor: newProfessor._id,
+					updatedAt: Date.now(),
+				},
+				{ new: true, runValidators: true },
+			);
+		}
+
 		await newProfessor.save();
 		return {
 			status: 201,
@@ -55,6 +55,13 @@ export const getProfessorByIdService = async req => {
 	try {
 		const professorData = await User.findById(professorId);
 
+		if (!professorData) {
+			return {
+				status: 404,
+				data: { message: 'Professor não encontrado' },
+			};
+		}
+
 		return { status: 200, data: professorData };
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
@@ -62,18 +69,22 @@ export const getProfessorByIdService = async req => {
 };
 
 export const updateProfessorService = async req => {
-	const { professorId } = req.params;
-	const { subject, ...reqBody } = req.body;
-
-	const professorExist = await User.findById(professorId);
-
-	if (!professorExist) {
-		return { status: 404, data: { message: 'Professor não encontrado!' } };
-	}
-
-	const subjectExists = await Subject.findOne({ name: subject });
-
 	try {
+		const { professorId } = req.params;
+		const { subject, ...reqBody } = req.body;
+
+		const professorExist = await User.findById(professorId);
+
+		if (!professorExist) {
+			// status 404 - not found
+			return {
+				status: 404,
+				data: { message: 'Professor não encontrado!' },
+			};
+		}
+
+		const subjectExists = await Subject.findOne({ name: subject });
+
 		await User.findByIdAndUpdate(
 			subjectExists.professor,
 			{
@@ -112,14 +123,14 @@ export const updateProfessorService = async req => {
 };
 
 export const deleteProfessorService = async req => {
-	const { professorId } = req.params;
-
-	const professorExists = await User.findById(professorId);
-	const subjectId = professorExists.subject;
-
-	const subjectExists = await Subject.findById(subjectId);
-
 	try {
+		const { professorId } = req.params;
+
+		const professorExists = await User.findById(professorId);
+		const subjectId = professorExists.subject;
+
+		const subjectExists = await Subject.findById(subjectId);
+
 		if (
 			professorExists.subject.length > 0 &&
 			professorExists._id.toString() ===
@@ -155,20 +166,20 @@ export const deleteProfessorService = async req => {
 
 // CRUD ADMIN - STUDENT
 export const createStudentService = async req => {
-	const { subject, ...studentData } = req.body;
-	const subjectExists = await Subject.findOne({ name: subject });
-
-	if (!subjectExists) {
-		return {
-			status: 400,
-			data: {
-				message:
-					'Estudantes devem ser cadastrados em disciplinas existentes!',
-			},
-		};
-	}
-
 	try {
+		const { subject, ...studentData } = req.body;
+		const subjectExists = await Subject.findOne({ name: subject });
+
+		if (!subjectExists) {
+			return {
+				status: 400,
+				data: {
+					message:
+						'Estudantes devem ser cadastrados em disciplinas existentes!',
+				},
+			};
+		}
+
 		const newStudent = new User({
 			...studentData,
 			subject: subjectExists._id,
@@ -204,10 +215,10 @@ export const getAllStudentsService = async () => {
 };
 
 export const getStudentByIdService = async req => {
-	const { studentId } = req.params;
-
-	const studentExists = await User.findById(studentId);
 	try {
+		const { studentId } = req.params;
+
+		const studentExists = await User.findById(studentId);
 		return { status: 200, data: studentExists };
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
@@ -215,22 +226,28 @@ export const getStudentByIdService = async req => {
 };
 
 export const updateStudentService = async req => {
-	const { studentId } = req.params;
-	const { subject, ...studentData } = req.body;
-
-	const studentExists = await User.findById(studentId);
-
-	if (!studentExists) {
-		return { status: 404, data: { message: 'Estudante não encontrado' } };
-	}
-
-	const subjectExists = await Subject.findOne({ name: subject });
-
-	if (!subjectExists) {
-		return { status: 404, data: { message: 'Disciplina não encontrada' } };
-	}
-
 	try {
+		const { studentId } = req.params;
+		const { subject, ...studentData } = req.body;
+
+		const studentExists = await User.findById(studentId);
+
+		if (!studentExists) {
+			return {
+				status: 404,
+				data: { message: 'Estudante não encontrado' },
+			};
+		}
+
+		const subjectExists = await Subject.findOne({ name: subject });
+
+		if (!subjectExists) {
+			return {
+				status: 404,
+				data: { message: 'Disciplina não encontrada' },
+			};
+		}
+
 		await User.findByIdAndUpdate(
 			studentExists._id,
 			{
@@ -259,22 +276,22 @@ export const updateStudentService = async req => {
 };
 
 export const deleteStudentService = async req => {
-	const { studentId } = req.params;
-
-	const studentExists = await User.findById(studentId);
-
-	if (!studentExists) {
-		return {
-			status: 404,
-			data: { message: 'Não foipossivel encontrar estudante' },
-		};
-	}
-
-	const allSubjects = await Subject.find();
-
-	console.log('🚀 ~ subjecstStudents:', allSubjects);
-
 	try {
+		const { studentId } = req.params;
+
+		const studentExists = await User.findById(studentId);
+
+		if (!studentExists) {
+			return {
+				status: 404,
+				data: { message: 'Não foipossivel encontrar estudante' },
+			};
+		}
+
+		const allSubjects = await Subject.find();
+
+		console.log('🚀 ~ subjecstStudents:', allSubjects);
+
 		await Subject.updateMany(
 			{ students: studentId },
 			{

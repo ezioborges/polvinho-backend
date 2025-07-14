@@ -27,6 +27,7 @@ export const createProfessorService = async req => {
 		const newProfessor = new User({
 			...reqBody,
 			subject: subjectExists ? subjectExists._id : [],
+			passwordHash: 'User123@',
 		});
 
 		if (subjectExists) {
@@ -94,6 +95,13 @@ export const updateProfessorService = async req => {
 		}
 
 		const subjectExists = await Subject.findOne({ name: subject });
+
+		if (!subjectExists) {
+			return {
+				status: 404,
+				data: { message: 'A disciplina não está cadastrada!' },
+			};
+		}
 
 		await User.findByIdAndUpdate(
 			subjectExists.professor,
@@ -192,10 +200,9 @@ export const createStudentService = async req => {
 
 		const newStudent = new User({
 			...studentData,
-			subject: subjectExists._id,
+			subject: subjectExists ? subjectExists._id : [],
+			passwordHash: 'User123@',
 		});
-
-		await newStudent.save();
 
 		await Subject.findByIdAndUpdate(
 			subjectExists._id,
@@ -205,6 +212,7 @@ export const createStudentService = async req => {
 			},
 			{ new: true, runValidators: true },
 		);
+		await newStudent.save();
 		return {
 			status: 201,
 			data: { message: 'Estudante criado com sucesso!' },

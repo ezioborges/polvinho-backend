@@ -306,10 +306,6 @@ export const deleteStudentService = async req => {
 			};
 		}
 
-		const allSubjects = await Subject.find();
-
-		console.log('🚀 ~ subjecstStudents:', allSubjects);
-
 		await Subject.updateMany(
 			{ students: studentId },
 			{

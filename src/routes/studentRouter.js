@@ -1,5 +1,5 @@
 import express from 'express';
-import { adminValidateJWT } from '../auth/validateJWT.js';
+import { validateJWT } from '../auth/validateJWT.js';
 import {
 	createStudentController,
 	deleteStudentController,
@@ -14,31 +14,31 @@ const router = express.Router();
 //STUDENT ROUTES
 router.post(
 	'/',
-	adminValidateJWT,
+	validateJWT(['admin']),
 	async (req, res) => await createStudentController(req, res),
 );
 
 router.get(
 	'/',
-	adminValidateJWT,
+	validateJWT(['admin', 'professor']),
 	async (req, res) => await getAllStudentsController(req, res),
 );
 
 router.get(
 	'/:studentId',
-	adminValidateJWT,
+	validateJWT(['admin']),
 	async (req, res) => await getStudentByIdController(req, res),
 );
 
 router.put(
 	'/:studentId',
-	adminValidateJWT,
+	validateJWT(['admin']),
 	async (req, res) => await updateStudentController(req, res),
 );
 
 router.delete(
 	'/:studentId',
-	adminValidateJWT,
+	validateJWT(['admin']),
 	async (req, res) => await deleteStudentController(req, res),
 );
 

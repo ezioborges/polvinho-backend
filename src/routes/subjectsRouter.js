@@ -25,7 +25,7 @@ router.get(
 
 router.get(
 	'/:subjectId',
-	validateJWT(['admin']),
+	validateJWT(['admin', 'professor']),
 	async (req, res) => await getSubjectByIdController(req, res),
 );
 

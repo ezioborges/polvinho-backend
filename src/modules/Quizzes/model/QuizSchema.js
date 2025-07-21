@@ -12,6 +12,7 @@ const QuizzSchema = new mongoose.Schema({
 		default: null,
 	},
 	title: { type: String, required: true },
+	description: { type: String, required: true },
 	isPublished: { type: Boolean, default: false },
 	isVisible: { type: Boolean, default: false },
 	maxAttempts: { type: Number, default: 1 },

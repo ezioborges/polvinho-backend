@@ -4,8 +4,21 @@ import User from '../../User/model/UserSchema.js';
 import Quiz from '../model/QuizSchema.js';
 
 export const createQuizService = async req => {
-	const { professor, subject, releaseDate, submissionDeadline, ...quizData } =
-		req.body;
+	const {
+		professor,
+		subject,
+		releaseDate,
+		submissionDeadline,
+		description,
+		...quizData
+	} = req.body;
+
+	if (!description) {
+		return {
+			status: 400,
+			data: { message: 'Por favor, forneça uma descrição para o quiz' },
+		};
+	}
 
 	const professorExists = await User.findOne({
 		name: professor,
@@ -23,12 +36,16 @@ export const createQuizService = async req => {
 			submissionDeadline: submissionDeadline
 				? formatDate(submissionDeadline)
 				: null,
+			description,
 		});
 		await newQuiz.save();
 
 		return { status: 201, data: { message: 'Quiz criado com sucesso!' } };
 	} catch (error) {
-		return { status: 500, data: { message: error.data } };
+		return {
+			status: 500,
+			data: { message: `Erro ao criar quiz: ${error.data}` },
+		};
 	}
 };
 

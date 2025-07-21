@@ -13,3 +13,14 @@ export const getAllUsersService = async () => {
 		return { status: 404, message: error.message };
 	}
 };
+
+export const createUserService = async (req, res) => {
+	try {
+		const reqBody = req.body;
+		const newUser = new User(reqBody);
+		await newUser.save();
+		return res.status(201).send(newUser);
+	} catch (error) {
+		return res.status(500).send({ message: error.message });
+	}
+};

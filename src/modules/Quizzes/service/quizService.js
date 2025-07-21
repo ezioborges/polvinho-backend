@@ -3,7 +3,8 @@ import User from '../../User/model/UserSchema.js';
 import Quiz from '../model/QuizSchema.js';
 
 export const createQuizService = async req => {
-	const { professor, subject, ...quizData } = req.body;
+	const { professor, subject, releaseDate, submissionDeadline, ...quizData } =
+		req.body;
 
 	const professorExists = await User.findOne({
 		name: professor,
@@ -12,13 +13,28 @@ export const createQuizService = async req => {
 
 	const subjectExists = await Subject.findOne({ name: subject });
 
-	console.log('subjectExists ===> ', subjectExists);
+	// aqui estou passando a data sem espaço ou pontuação
+	const formatDate = (releaseDateParam = '') => {
+		const year = releaseDateParam.slice(0, 4);
+		const month = releaseDateParam.slice(4, 6);
+		const day = releaseDateParam.slice(6, 8);
+
+		const date = new Date(year, month - 1, day);
+
+		return date ? date.toISOString() : null;
+	};
+
+	console.log('releaseDate ===> ', formatDate(releaseDate));
 
 	try {
 		const newQuiz = new Quiz({
 			...quizData,
 			professorId: professorExists ? professorExists._id : null,
 			subjectId: subjectExists ? subjectExists._id : null,
+			releaseDate: releaseDate ? formatDate(releaseDate) : null,
+			submissionDeadline: submissionDeadline
+				? formatDate(submissionDeadline)
+				: null,
 		});
 		await newQuiz.save();
 

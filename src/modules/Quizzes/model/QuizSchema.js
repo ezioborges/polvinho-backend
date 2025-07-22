@@ -11,6 +11,13 @@ const QuizzSchema = new mongoose.Schema({
 		ref: 'subjects',
 		default: null,
 	},
+	questions: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'questions',
+			default: [],
+		},
+	],
 	title: { type: String, required: true },
 	description: { type: String, required: true },
 	isPublished: { type: Boolean, default: false },

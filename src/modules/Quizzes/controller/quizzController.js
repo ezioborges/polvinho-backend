@@ -3,6 +3,7 @@ import {
 	deleteQuizService,
 	getAllQuizzesService,
 	getQuizByIdService,
+	getQuizzesBySubjectService,
 	updateQuizService,
 } from '../service/quizService.js';
 
@@ -20,6 +21,12 @@ export const getAllQuizzesController = async (_req, res) => {
 
 export const getQuizByIdController = async (req, res) => {
 	const { status, data } = await getQuizByIdService(req);
+
+	return res.status(status).send(data);
+};
+
+export const getQuizzesBySubjectController = async (req, res) => {
+	const { status, data } = await getQuizzesBySubjectService(req);
 
 	return res.status(status).send(data);
 };

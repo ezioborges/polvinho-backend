@@ -40,6 +40,15 @@ export const createQuizService = async req => {
 		});
 		await newQuiz.save();
 
+		await Subject.findByIdAndUpdate(
+			subjectExists._id,
+			{
+				$push: { quizzes: newQuiz._id },
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
 		return { status: 201, data: { message: 'Quiz criado com sucesso!' } };
 	} catch (error) {
 		return {
@@ -72,6 +81,22 @@ export const getQuizByIdService = async req => {
 		return { status: 200, data: { message: quizData } };
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
+	}
+};
+
+export const getQuizzesBySubjectService = async req => {
+	const { subjectId } = req.params;
+
+	const subject = await Subject.findById(subjectId).populate('quizzes');
+	try {
+		return { status: 200, data: subject };
+	} catch (error) {
+		return {
+			status: 500,
+			data: {
+				message: `Error ao trazer os quizzes da subject${error.message}`,
+			},
+		};
 	}
 };
 

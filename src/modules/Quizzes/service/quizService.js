@@ -49,7 +49,7 @@ export const createQuizService = async req => {
 			{ new: true, runValidators: true },
 		);
 
-		return { status: 201, data: { message: 'Quiz criado com sucesso!' } };
+		return { status: 201, data: { quizId: newQuiz._id } };
 	} catch (error) {
 		return {
 			status: 500,

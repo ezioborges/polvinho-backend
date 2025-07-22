@@ -73,14 +73,19 @@ export const getAllQuizzesService = async () => {
 };
 
 export const getQuizByIdService = async req => {
+	const { quizId } = req.params;
+
 	try {
-		const { quizId } = req.params;
+		const quiz = await Quiz.findById(quizId)
+			.populate('professorId')
+			.populate('subjectId');
 
-		const quizData = await Quiz.findById(quizId);
-
-		return { status: 200, data: { message: quizData } };
+		return { status: 200, data: quiz };
 	} catch (error) {
-		return { status: 500, data: { message: error.message } };
+		return {
+			status: 500,
+			data: { message: `Erro ao buscar quiz pelo ID ${error}` },
+		};
 	}
 };
 

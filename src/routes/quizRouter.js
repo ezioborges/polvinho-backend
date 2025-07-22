@@ -20,7 +20,7 @@ router.get(
 );
 
 router.get(
-	'/:quizId',
+	'/quiz/:quizId',
 	async (req, res) => await getQuizByIdController(req, res),
 );
 

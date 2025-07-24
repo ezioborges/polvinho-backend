@@ -1,9 +1,8 @@
-export const formatDate = (releaseDateParam = '') => {
-	const year = releaseDateParam.slice(0, 4);
-	const month = releaseDateParam.slice(4, 6);
-	const day = releaseDateParam.slice(6, 8);
+export const formatDate = (submissionDeadlineParam = '') => {
+	const day = submissionDeadlineParam.slice(0, 2);
+	const month = submissionDeadlineParam.slice(2, 4);
+	const year = submissionDeadlineParam.slice(4);
 
-	const date = new Date(year, month - 1, day);
-
-	return date ? date.toISOString() : null;
+	const formatedDate = new Date(year, month - 1, day).toISOString();
+	return formatedDate;
 };

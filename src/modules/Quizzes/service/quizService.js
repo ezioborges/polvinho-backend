@@ -27,15 +27,15 @@ export const createQuizService = async req => {
 
 	const subjectExists = await Subject.findOne({ name: subject });
 
+	const formatedDate = formatDate(submissionDeadline);
+
 	try {
 		const newQuiz = new Quiz({
 			...quizData,
 			professorId: professorExists ? professorExists._id : null,
 			subjectId: subjectExists ? subjectExists._id : null,
-			releaseDate: releaseDate ? formatDate(releaseDate) : null,
-			submissionDeadline: submissionDeadline
-				? formatDate(submissionDeadline)
-				: null,
+			releaseDate: releaseDate ? releaseDate : null,
+			submissionDeadline: formatedDate ? formatedDate : null,
 			description,
 		});
 		await newQuiz.save();

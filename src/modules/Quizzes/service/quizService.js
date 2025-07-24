@@ -60,7 +60,10 @@ export const createQuizService = async req => {
 
 export const getAllQuizzesService = async () => {
 	try {
-		const quizzes = await Quiz.find();
+		const quizzes = await Quiz.find()
+			.populate('professorId')
+			.populate('subjectId')
+			.populate('questions');
 
 		if (!quizzes || quizzes.length === 0) {
 			return { status: 404, data: [] };

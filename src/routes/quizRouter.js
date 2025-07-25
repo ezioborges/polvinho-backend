@@ -5,6 +5,7 @@ import {
 	getAllQuizzesController,
 	getQuizByIdController,
 	getQuizzesBySubjectController,
+	startQuizController,
 	updateQuizController,
 } from '../modules/Quizzes/controller/quizzController.js';
 
@@ -27,6 +28,11 @@ router.get(
 router.put(
 	'/:quizId',
 	async (req, res) => await updateQuizController(req, res),
+);
+
+router.put(
+	'/start/:quizId',
+	async (req, res) => await startQuizController(req, res),
 );
 
 router.delete(

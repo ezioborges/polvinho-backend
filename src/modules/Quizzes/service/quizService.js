@@ -126,8 +126,6 @@ export const updateQuizService = async req => {
 
 		const subjectExists = await Subject.findOne({ name: subject });
 
-		console.log('subjectExists ===> ', subjectExists);
-
 		// atualiza o quizz
 		await Quiz.findByIdAndUpdate(
 			quizId,
@@ -167,6 +165,36 @@ export const updateQuizService = async req => {
 		};
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
+	}
+};
+
+export const startQuizService = async req => {
+	try {
+		const { quizId } = req.params;
+
+		const quizExists = await Quiz.findById(quizId);
+
+		if (!quizExists || quizExists.isDeleted === true) {
+			return {
+				status: 404,
+				data: { message: 'Quiz não existe ou já foi deletado!' },
+			};
+		}
+
+		await Quiz.findByIdAndUpdate(
+			quizExists._id,
+			{ isPublished: true, updatedAt: Date.now() },
+			{ new: true, runValidators: true },
+		);
+
+		return { status: 200, data: { message: 'Quiz iniciado com sucesso!' } };
+	} catch (error) {
+		return {
+			status: 500,
+			data: {
+				message: `Não foi possível iniciar o quiz: ${error.message}`,
+			},
+		};
 	}
 };
 

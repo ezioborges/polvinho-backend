@@ -29,7 +29,7 @@ export const createSubjectService = async req => {
 
 export const getAllSubjectsService = async () => {
 	try {
-		const subject = await Subject.find();
+		const subject = await Subject.find().populate('quizzes');
 
 		if (!subject || subject.length === 0) {
 			return {

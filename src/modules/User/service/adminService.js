@@ -332,3 +332,23 @@ export const deleteStudentService = async req => {
 		return { status: 500, data: { message: error.message } };
 	}
 };
+
+export const getSubjectsByStudentService = async req => {
+	try {
+		const { studentId } = req.params;
+
+		const student = await User.findById(studentId).populate('subject');
+
+		return {
+			status: 200,
+			data: student.subject,
+		};
+	} catch (error) {
+		return {
+			status: 500,
+			data: {
+				message: `Erro na busca de disciplinas do aluno: ${error.message}`,
+			},
+		};
+	}
+};

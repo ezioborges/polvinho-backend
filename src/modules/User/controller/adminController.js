@@ -8,6 +8,7 @@ import {
 	getAllUsersService,
 	getProfessorByIdService,
 	getStudentByIdService,
+	getSubjectsByStudentService,
 	updateProfessorService,
 	updateStudentService,
 } from '../service/adminService.js';
@@ -76,6 +77,12 @@ export const updateStudentController = async (req, res) => {
 
 export const deleteStudentController = async (req, res) => {
 	const { status, data } = await deleteStudentService(req);
+
+	return res.status(status).send(data);
+};
+
+export const getSubjectsByStudentController = async (req, res) => {
+	const { status, data } = await getSubjectsByStudentService(req, res);
 
 	return res.status(status).send(data);
 };

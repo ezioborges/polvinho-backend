@@ -19,13 +19,13 @@ router.post(
 
 router.get(
 	'/',
-	validateJWT(['admin', 'professor']),
+	validateJWT(['admin', 'professor', 'aluno']),
 	async (req, res) => await getAllSubjectsController(req, res),
 );
 
 router.get(
 	'/:subjectId',
-	validateJWT(['admin', 'professor']),
+	validateJWT(['admin', 'professor', 'aluno']),
 	async (req, res) => await getSubjectByIdController(req, res),
 );
 

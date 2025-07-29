@@ -5,6 +5,7 @@ import {
 	deleteStudentController,
 	getAllStudentsController,
 	getStudentByIdController,
+	getSubjectsByStudentController,
 	updateStudentController,
 } from '../modules/User/controller/adminController.js';
 import '../modules/User/model/UserSchema.js';
@@ -20,7 +21,7 @@ router.post(
 
 router.get(
 	'/',
-	validateJWT(['admin', 'professor']),
+	validateJWT(['admin', 'professor', 'aluno']),
 	async (req, res) => await getAllStudentsController(req, res),
 );
 
@@ -28,6 +29,11 @@ router.get(
 	'/:studentId',
 	validateJWT(['admin']),
 	async (req, res) => await getStudentByIdController(req, res),
+);
+
+router.get(
+	'/:studentId/subjects',
+	async (req, res) => await getSubjectsByStudentController(req, res),
 );
 
 router.put(

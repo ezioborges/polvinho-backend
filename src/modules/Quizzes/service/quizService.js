@@ -168,7 +168,7 @@ export const updateQuizService = async req => {
 	}
 };
 
-export const startQuizService = async req => {
+export const publishQuizService = async req => {
 	try {
 		const { quizId } = req.params;
 
@@ -193,6 +193,49 @@ export const startQuizService = async req => {
 			status: 500,
 			data: {
 				message: `Não foi possível iniciar o quiz: ${error.message}`,
+			},
+		};
+	}
+};
+
+export const studentStartQuizService = async req => {
+	try {
+		const { quizId } = req.params;
+
+		const quiz = await Quiz.findById(quizId);
+
+		if (!quiz || quiz.isDeleted === true) {
+			return {
+				status: 404,
+				data: { message: 'Quiz deletado ou não existe!' },
+			};
+		}
+
+		if (quiz.studentStarted === true) {
+			return {
+				status: 400,
+				data: { message: 'O quiz está em andamento' },
+			};
+		}
+
+		await Quiz.findByIdAndUpdate(
+			quizId,
+			{
+				studentStarted: true,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
+		return {
+			status: 200,
+			data: { message: 'O aluno iniciou o quiz com sucesso!' },
+		};
+	} catch (error) {
+		return {
+			status: 500,
+			data: {
+				message: `Erro ao iniciar o quiz para o aluno: ${error.message}`,
 			},
 		};
 	}

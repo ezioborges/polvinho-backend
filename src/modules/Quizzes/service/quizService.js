@@ -81,7 +81,8 @@ export const getQuizByIdService = async req => {
 	try {
 		const quiz = await Quiz.findById(quizId)
 			.populate('professorId')
-			.populate('subjectId');
+			.populate('subjectId')
+			.populate('questions');
 
 		return { status: 200, data: quiz };
 	} catch (error) {

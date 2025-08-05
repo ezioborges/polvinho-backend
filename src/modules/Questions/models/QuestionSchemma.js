@@ -7,11 +7,13 @@ const QuestionSchemma = new mongoose.Schema({
 		default: null,
 	},
 	question: { type: String, required: true },
-	firstOption: { type: String, required: true },
-	secondOption: { type: String, required: true },
-	thirdOption: { type: String, required: true },
-	correctOption: { type: String, required: true },
-	createsAt: { type: Date, default: Date.now() },
+	options: [
+		{
+			option: { type: String, required: true },
+			isCorrect: { type: Boolean, default: false },
+		},
+	],
+	createdAt: { type: Date, default: Date.now() },
 	updatedAt: { type: Date, default: null },
 	isDeleted: { type: Boolean, default: false },
 });

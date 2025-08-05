@@ -4,38 +4,70 @@ import Question from '../models/QuestionSchemma.js';
 export const createQuestionService = async req => {
 	try {
 		const { quizId } = req.params;
-		const question = req.body;
 
-		const quizExists = await Quiz.findOne({
-			_id: quizId,
-			isDeleted: false,
-		});
+		const { question, options } = req.body;
 
-		if (!quizExists) {
+		const quiz = await Quiz.findById(quizId);
+
+		if (!quiz) {
+			return { status: 404, data: { message: 'Quiz não encontrado' } };
+		}
+
+		if (!question) {
 			return {
-				status: 404,
-				data: { message: 'Quiz não encontrado ou excluido' },
+				status: 400,
+				data: { message: 'Pergunta é obrigatória!' },
+			};
+		}
+
+		if (!options || options.length < 4) {
+			return {
+				status: 400,
+				data: { message: 'No mínimo quatro opções são obrigatórias!' },
+			};
+		}
+
+		const correctAnswers = options.filter(
+			option => option.isCorrect === true,
+		);
+		if (correctAnswers.length !== 1) {
+			return {
+				status: 400,
+				data: {
+					message:
+						'A pergunta deve possuir apenas UMA alternativa correta.',
+				},
 			};
 		}
 
 		const newQuestion = new Question({
-			...question,
-			quizId: quizId,
+			quizId: quizId ? quizId : null,
+			question,
+			options: options.map(option => ({
+				option: option.option,
+				isCorrect: option.isCorrect || false,
+			})),
 		});
 
 		await newQuestion.save();
 
-		await Quiz.findByIdAndUpdate(
-			quizExists._id,
-			{ $push: { questions: newQuestion._id }, updatedAt: Date.now() },
-			{ new: true, runValidators: true },
-		).populate('questions');
-
-		await Question.findById(newQuestion._id).populate('quizId');
+		if (quizId) {
+			await Quiz.findByIdAndUpdate(
+				quizId,
+				{
+					$push: { questions: newQuestion._id },
+					updatedAt: Date.now(),
+				},
+				{ new: true, runValidators: true },
+			);
+		}
 
 		return {
 			status: 201,
-			data: newQuestion,
+			data: {
+				message: 'Pergunta criada com sucesso!',
+				questionId: newQuestion._id,
+			},
 		};
 	} catch (error) {
 		return {

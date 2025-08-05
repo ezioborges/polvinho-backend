@@ -5,7 +5,6 @@ import Quiz from '../model/QuizSchema.js';
 
 export const createQuizService = async req => {
 	const {
-		professor,
 		subject,
 		releaseDate,
 		submissionDeadline,
@@ -20,19 +19,15 @@ export const createQuizService = async req => {
 		};
 	}
 
-	const professorExists = await User.findOne({
-		name: professor,
-		role: 'professor',
-	});
-
 	const subjectExists = await Subject.findOne({ name: subject });
+	console.log('🚀 ~ createQuizService ~ subjectExists:', subjectExists);
 
 	const formatedDate = formatDate(submissionDeadline);
 
 	try {
 		const newQuiz = new Quiz({
 			...quizData,
-			professorId: professorExists ? professorExists._id : null,
+			professorId: subjectExists.professor,
 			subjectId: subjectExists ? subjectExists._id : null,
 			releaseDate: releaseDate ? releaseDate : null,
 			submissionDeadline: formatedDate ? formatedDate : null,

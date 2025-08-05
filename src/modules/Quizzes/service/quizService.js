@@ -20,7 +20,6 @@ export const createQuizService = async req => {
 	}
 
 	const subjectExists = await Subject.findOne({ name: subject });
-	console.log('🚀 ~ createQuizService ~ subjectExists:', subjectExists);
 
 	const formatedDate = formatDate(submissionDeadline);
 

@@ -1,4 +1,5 @@
 import express from 'express';
+import { getAllStudentAnswersByQuizIdController } from '../modules/Questions/controller/QuestionController.js';
 import {
 	createQuizController,
 	deleteQuizController,
@@ -24,6 +25,11 @@ router.get(
 router.get(
 	'/quiz/:quizId',
 	async (req, res) => await getQuizByIdController(req, res),
+);
+
+router.get(
+	'/:quizId/student/:studentId/questions-responses',
+	async (req, res) => await getAllStudentAnswersByQuizIdController(req, res),
 );
 
 router.put(

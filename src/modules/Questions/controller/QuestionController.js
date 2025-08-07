@@ -1,6 +1,7 @@
 import {
 	createQuestionService,
 	getAllQuestionsByQuizIdService,
+	getAllStudentAnswersByQuizIdService,
 	studentAnswerService,
 } from '../service/QuestionService.js';
 
@@ -18,6 +19,12 @@ export const getAllQuestionsByQuizIdController = async (req, res) => {
 
 export const studentAnswerController = async (req, res) => {
 	const { status, data } = await studentAnswerService(req);
+
+	return res.status(status).send(data);
+};
+
+export const getAllStudentAnswersByQuizIdController = async (req, res) => {
+	const { status, data } = await getAllStudentAnswersByQuizIdService(req);
 
 	return res.status(status).send(data);
 };

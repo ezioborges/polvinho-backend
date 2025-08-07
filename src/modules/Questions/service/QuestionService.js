@@ -188,3 +188,50 @@ export const studentAnswerService = async req => {
 		};
 	}
 };
+
+export const getAllStudentAnswersByQuizIdService = async req => {
+	try {
+		const { quizId, studentId } = req.params;
+
+		const quizExists = await Quiz.findById(quizId);
+
+		console.log(
+			'testando pra ver se vem se o quizExists ===> ',
+			quizExists,
+		);
+
+		if (!quizExists) {
+			return { status: 404, data: { message: 'Quiz não encontrado.' } };
+		}
+
+		const studentExists = await User.findById(studentId);
+
+		if (!studentExists) {
+			return {
+				status: 404,
+				data: { message: 'Estudante não localizado.' },
+			};
+		}
+
+		const studentAnswers = await Answer.find({ quizId, studentId });
+
+		return {
+			status: 200,
+			data: {
+				quiz: quizExists.title,
+				student: studentExists.name,
+				studentAnswers,
+				answersAmount: studentAnswers.length,
+			},
+		};
+	} catch (error) {
+		return {
+			status: 500,
+			data: {
+				message:
+					'Não foi possível encontrar as respostas do estudante.',
+				error: error.message,
+			},
+		};
+	}
+};

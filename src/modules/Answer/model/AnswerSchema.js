@@ -16,7 +16,7 @@ const AnswerSchema = new mongoose.Schema({
 		ref: 'questions',
 		required: true,
 	},
-	selectedOption: {
+	selectedOptionId: {
 		type: String,
 		required: true,
 	},

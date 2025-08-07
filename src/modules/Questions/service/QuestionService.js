@@ -101,7 +101,7 @@ export const studentAnswerService = async req => {
 	try {
 		const { quizId } = req.params;
 
-		const { questionId, studentId, selectedOption } = req.body;
+		const { questionId, studentId, selectedOptionId } = req.body;
 
 		const quizExists = await Quiz.findById(quizId).populate('questions');
 
@@ -123,8 +123,7 @@ export const studentAnswerService = async req => {
 			return {
 				status: 404,
 				data: {
-					message:
-						'Perguntão não encontrada ou não faz parte do quiz',
+					message: 'Pergunta não encontrada ou não faz parte do quiz',
 				},
 			};
 		}
@@ -150,7 +149,7 @@ export const studentAnswerService = async req => {
 		}
 
 		const selectedOptionExists = questionExists.options.some(
-			option => option._id.toString() === selectedOption,
+			option => option._id.toString() === selectedOptionId,
 		);
 
 		const existingAnswer = await Answer.findOne({
@@ -170,7 +169,7 @@ export const studentAnswerService = async req => {
 			studentId: studentExists._id,
 			quizId: quizExists._id,
 			questionId: questionExists._id,
-			selectedOption: selectedOptionExists ? selectedOption : null,
+			selectedOptionId: selectedOptionExists ? selectedOptionId : null,
 		});
 
 		await newAnswer.save();

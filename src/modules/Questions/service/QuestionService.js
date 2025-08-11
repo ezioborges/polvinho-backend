@@ -195,11 +195,6 @@ export const getAllStudentAnswersByQuizIdService = async req => {
 
 		const quizExists = await Quiz.findById(quizId);
 
-		console.log(
-			'testando pra ver se vem se o quizExists ===> ',
-			quizExists,
-		);
-
 		if (!quizExists) {
 			return { status: 404, data: { message: 'Quiz não encontrado.' } };
 		}

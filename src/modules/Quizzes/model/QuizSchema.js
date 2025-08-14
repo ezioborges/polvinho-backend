@@ -23,6 +23,7 @@ const QuizzSchema = new mongoose.Schema({
 	isPublished: { type: Boolean, default: false },
 	isVisible: { type: Boolean, default: false },
 	maxAttempts: { type: Number, default: 1 },
+	attemptsRemaining: { type: Number, default: 1 },
 	timeMinutes: { type: Number, default: 30 },
 	releaseDate: { type: Date, default: null },
 	submissionDeadline: { type: Date, default: null },

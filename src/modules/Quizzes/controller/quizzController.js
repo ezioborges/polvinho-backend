@@ -5,6 +5,7 @@ import {
 	getQuizByIdService,
 	getQuizzesBySubjectService,
 	publishQuizService,
+	quizStudentResultService,
 	studentStartQuizService,
 	updateQuizService,
 } from '../service/quizService.js';
@@ -53,6 +54,12 @@ export const studentStartQuizController = async (req, res) => {
 
 export const deleteQuizController = async (req, res) => {
 	const { status, data } = await deleteQuizService(req);
+
+	return res.status(status).send(data);
+};
+
+export const quizStudentResultController = async (req, res) => {
+	const { status, data } = await quizStudentResultService(req);
 
 	return res.status(status).send(data);
 };

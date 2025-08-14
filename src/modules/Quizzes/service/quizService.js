@@ -1,4 +1,5 @@
 import { formatDate } from '../../../utils/formatDate.js';
+import Answer from '../../Answer/model/AnswerSchema.js';
 import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../../User/model/UserSchema.js';
 import Quiz from '../model/QuizSchema.js';
@@ -262,5 +263,62 @@ export const deleteQuizService = async req => {
 		return { status: 200, data: { message: 'Quiz deletado!' } };
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
+	}
+};
+
+export const quizStudentResultService = async req => {
+	try {
+		const { quizId, studentId } = req.params;
+
+		const quiz = await Quiz.findById(quizId).populate('questions');
+
+		if (!quiz || quiz.isDeleted === true) {
+			return {
+				status: 404,
+				data: { message: 'Quiz não encontrado ou deletado.' },
+			};
+		}
+
+		const student = await User.findById(studentId);
+
+		if (!student || student.isDeleted === true) {
+			return {
+				status: 404,
+				data: { message: 'Aluno não encontrado ou deletado.' },
+			};
+		}
+
+		const correctAnswers = quiz.questions.map(question =>
+			question.options.find(option => option.isCorrect),
+		);
+
+		console.log('correctAnswers ===> ', correctAnswers);
+		const studentAnswers = await Answer.find({ quizId, studentId });
+
+		const studentSelectedOptions = studentAnswers.map(
+			answer => answer.selectedOptionId,
+		);
+
+		let correctAnswersCount = 0;
+		correctAnswers.forEach(answer => {
+			if (studentSelectedOptions.includes(answer._id.toString())) {
+				correctAnswersCount++;
+			}
+		});
+
+		const result = (
+			(correctAnswersCount / correctAnswers.length) *
+			10
+		).toFixed();
+
+		return { status: 200, data: { result } };
+	} catch (error) {
+		return {
+			status: 500,
+			data: {
+				message: 'Não foi possível retornar nota do aluno.',
+				error: error.message,
+			},
+		};
 	}
 };

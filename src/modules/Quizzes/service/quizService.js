@@ -216,8 +216,7 @@ export const studentStartQuizService = async req => {
 				},
 			};
 		}
-
-		if (quiz.studentStarted === true) {
+		if (quiz.attemptsFinished === true) {
 			return {
 				status: 400,
 				data: { message: 'O quiz está em andamento' },
@@ -230,7 +229,7 @@ export const studentStartQuizService = async req => {
 			quizId,
 			{
 				$set: {
-					studentStarted: newAttemptsValue <= 0,
+					attemptsFinished: newAttemptsValue <= 0,
 					updatedAt: Date.now(),
 				},
 				$inc: { attemptsRemaining: -1 },

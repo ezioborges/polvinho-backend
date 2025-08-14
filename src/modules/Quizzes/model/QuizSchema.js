@@ -31,7 +31,8 @@ const QuizzSchema = new mongoose.Schema({
 	updatedAt: { type: Date, default: null },
 	deletedAt: { type: Date, default: null },
 	isDeleted: { type: Boolean, default: false },
-	studentStarted: { type: Boolean, default: false },
+	attemptsFinished: { type: Boolean, default: false },
+	attemptsList: { type: Array, default: [] }, //TODO: CRIAR UM ARRAY RELACIONANDO A QUANTIDADE DE TENTATIVAS
 });
 
 const Quiz = mongoose.model('quizzes', QuizzSchema);

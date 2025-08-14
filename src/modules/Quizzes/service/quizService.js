@@ -207,6 +207,16 @@ export const studentStartQuizService = async req => {
 			};
 		}
 
+		if (quiz.maxAttempts <= 0) {
+			return {
+				status: 400,
+				data: {
+					message:
+						'Você não tem mais tentativas restantes para este quiz.',
+				},
+			};
+		}
+
 		if (quiz.studentStarted === true) {
 			return {
 				status: 400,
@@ -214,18 +224,30 @@ export const studentStartQuizService = async req => {
 			};
 		}
 
-		await Quiz.findByIdAndUpdate(
+		const newAttemptsValue = quiz.maxAttempts - 1;
+
+		const updatedQuiz = await Quiz.findByIdAndUpdate(
 			quizId,
 			{
-				studentStarted: true,
-				updatedAt: Date.now(),
+				$set: {
+					studentStarted: newAttemptsValue <= 0,
+					updatedAt: Date.now(),
+				},
+				$inc: { maxAttempts: -1 },
 			},
 			{ new: true, runValidators: true },
 		);
 
 		return {
 			status: 200,
-			data: { message: 'O aluno iniciou o quiz com sucesso!' },
+			data: {
+				message:
+					newAttemptsValue <= 0
+						? 'Quiz finalizado - sem mais tentativas'
+						: 'Quiz iniciado com sucesso!',
+				quiz: updatedQuiz,
+				attemptsRemaining: updatedQuiz.maxAttempts,
+			},
 		};
 	} catch (error) {
 		return {
@@ -292,7 +314,6 @@ export const quizStudentResultService = async req => {
 			question.options.find(option => option.isCorrect),
 		);
 
-		console.log('correctAnswers ===> ', correctAnswers);
 		const studentAnswers = await Answer.find({ quizId, studentId });
 
 		const studentSelectedOptions = studentAnswers.map(

@@ -1,5 +1,5 @@
 import { formatDate } from '../../../utils/formatDate.js';
-import Answer from '../../Answer/model/AnswerSchema.js';
+import { studentResult } from '../../../utils/studentResult.js';
 import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../../User/model/UserSchema.js';
 import Quiz from '../model/QuizSchema.js';
@@ -293,43 +293,7 @@ export const quizStudentResultService = async req => {
 
 		const quiz = await Quiz.findById(quizId).populate('questions');
 
-		if (!quiz || quiz.isDeleted === true) {
-			return {
-				status: 404,
-				data: { message: 'Quiz não encontrado ou deletado.' },
-			};
-		}
-
-		const student = await User.findById(studentId);
-
-		if (!student || student.isDeleted === true) {
-			return {
-				status: 404,
-				data: { message: 'Aluno não encontrado ou deletado.' },
-			};
-		}
-
-		const correctAnswers = quiz.questions.map(question =>
-			question.options.find(option => option.isCorrect),
-		);
-
-		const studentAnswers = await Answer.find({ quizId, studentId });
-
-		const studentSelectedOptions = studentAnswers.map(
-			answer => answer.selectedOptionId,
-		);
-
-		let correctAnswersCount = 0;
-		correctAnswers.forEach(answer => {
-			if (studentSelectedOptions.includes(answer._id.toString())) {
-				correctAnswersCount++;
-			}
-		});
-
-		const result = (
-			(correctAnswersCount / correctAnswers.length) *
-			10
-		).toFixed();
+		const result = await studentResult(quizId, studentId, quiz);
 
 		return { status: 200, data: { result } };
 	} catch (error) {

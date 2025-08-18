@@ -99,90 +99,87 @@ export const getAllQuestionsByQuizIdService = async req => {
 
 export const studentAnswerService = async req => {
 	try {
-		const { quizId } = req.params;
+		const { quizId, studentId } = req.params;
+		const answersArray = req.body; // aqui recebe o array de resposta
 
-		const { questionId, studentId, selectedOptionId } = req.body;
-
-		const quizExists = await Quiz.findById(quizId).populate('questions');
-
-		if (!quizExists) {
+		// Validação básica
+		if (!answersArray || answersArray.length === 0) {
 			return {
-				status: 404,
-				data: {
-					message:
-						'Quiz não encontrado ou fora do prazo para realização.',
-				},
+				status: 400,
+				data: { message: 'Quiz sem respostas salvas' },
 			};
 		}
 
-		const questionOfQuiz = quizExists.questions.some(
-			question => question._id.toString() === questionId,
-		);
-
-		if (!questionOfQuiz || quizExists.questions.length === 0) {
+		const quiz = await Quiz.findById(quizId);
+		if (!quiz || quiz.isDeleted === true) {
 			return {
 				status: 404,
-				data: {
-					message: 'Pergunta não encontrada ou não faz parte do quiz',
-				},
+				data: { message: 'Quiz não encontrado ou deletado.' },
 			};
 		}
 
-		const questionExists = await Question.findById(questionId);
-
-		if (!questionExists || questionExists.length === 0) {
+		const student = await User.findById(studentId);
+		if (!student || student.isDeleted === true) {
 			return {
 				status: 404,
-				data: {
-					message: 'Pergunta não encontrada ou não faz parte do quiz',
-				},
+				data: { message: 'Estudante não encontrado ou excluído.' },
 			};
 		}
 
-		const studentExists = await User.findById(studentId);
+		// Validação de cada resposta
+		const answersToSave = [];
+		for (const answer of answersArray) {
+			const { questionId, selectedOptionId } = answer;
 
-		if (!studentExists) {
-			return {
-				status: 404,
-				data: { message: 'Estudante não encontrado.' },
-			};
+			const question = await Question.findById(questionId);
+			if (!question || question.isDeleted === true) {
+				return {
+					status: 404,
+					data: {
+						message: `Pergunta ${questionId} não encontrada ou deletada.`,
+					},
+				};
+			}
+
+			const selectedOptionExists = question.options.some(
+				option => option._id.toString() === selectedOptionId,
+			);
+			if (!selectedOptionExists) {
+				return {
+					status: 400,
+					data: {
+						message: `Opção ${selectedOptionId} não está disponível para a pergunta ${questionId}`,
+					},
+				};
+			}
+
+			answersToSave.push({
+				attempt: quiz.maxAttempts,
+				studentId,
+				quizId,
+				questionId,
+				selectedOptionId,
+			});
 		}
 
-		const selectedOptionExists = questionExists.options.some(
-			option => option._id.toString() === selectedOptionId,
-		);
-
-		const existingAnswer = await Answer.findOne({
-			studentId: studentExists._id,
-			quizId: quizExists._id,
-			questionId: questionExists._id,
+		const newAnswers = new Answer({
+			answers: answersToSave,
+			createdAt: Date.now(),
 		});
-
-		if (existingAnswer) {
-			return {
-				status: 409,
-				data: { message: 'Resposta já registrada para esta pergunta.' },
-			};
-		}
-
-		const newAnswer = new Answer({
-			studentId: studentExists._id,
-			quizId: quizExists._id,
-			questionId: questionExists._id,
-			selectedOptionId: selectedOptionExists ? selectedOptionId : null,
-		});
-
-		await newAnswer.save();
+		await newAnswers.save();
 
 		return {
 			status: 201,
-			data: { message: 'Resposta registrada com sucesso' },
+			data: {
+				message: 'Respostas registradas com sucesso',
+				answers: newAnswers.answers,
+			},
 		};
 	} catch (error) {
 		return {
 			status: 500,
 			data: {
-				message: 'Não foi possível registrar a resposta',
+				message: 'Não foi possível registrar as respostas',
 				error: error.message,
 			},
 		};

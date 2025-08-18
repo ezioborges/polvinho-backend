@@ -17,7 +17,7 @@ router.get('/:quizId/questions', async (req, res) => {
 });
 
 router.post(
-	'/:quizId/student-responses',
+	'/:quizId/student/:studentId/student-responses',
 	async (req, res) => await studentAnswerController(req, res),
 );
 

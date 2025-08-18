@@ -207,7 +207,7 @@ export const studentStartQuizService = async req => {
 			};
 		}
 
-		if (quiz.attemptsRemaining <= 0) {
+		if (quiz.maxAttempts <= 0) {
 			return {
 				status: 400,
 				data: {
@@ -223,16 +223,13 @@ export const studentStartQuizService = async req => {
 			};
 		}
 
-		const newAttemptsValue = quiz.attemptsRemaining - 1;
-
 		const updatedQuiz = await Quiz.findByIdAndUpdate(
 			quizId,
 			{
 				$set: {
-					attemptsFinished: newAttemptsValue <= 0,
+					attemptsFinished: quiz.maxAttempts <= 0,
 					updatedAt: Date.now(),
 				},
-				$inc: { attemptsRemaining: -1 },
 			},
 			{ new: true, runValidators: true },
 		);
@@ -241,11 +238,11 @@ export const studentStartQuizService = async req => {
 			status: 200,
 			data: {
 				message:
-					newAttemptsValue <= 0
+					quiz.maxAttempts <= 0
 						? 'Quiz finalizado - sem mais tentativas'
 						: 'Quiz iniciado com sucesso!',
 				quiz: updatedQuiz,
-				attemptsRemaining: updatedQuiz.attemptsRemaining,
+				maxAttempts: updatedQuiz.maxAttempts,
 			},
 		};
 	} catch (error) {

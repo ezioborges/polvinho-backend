@@ -288,6 +288,7 @@ export const quizStudentResultService = async req => {
 	try {
 		const { quizId, studentId } = req.params;
 
+		//passo o quiz para conseguir recuperar as questions
 		const quiz = await Quiz.findById(quizId).populate('questions');
 
 		const result = await studentResult(quizId, studentId, quiz);

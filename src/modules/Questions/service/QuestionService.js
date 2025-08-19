@@ -154,15 +154,14 @@ export const studentAnswerService = async req => {
 			}
 
 			answersToSave.push({
-				attempt: quiz.maxAttempts,
-				studentId,
-				quizId,
 				questionId,
 				selectedOptionId,
 			});
 		}
 
 		const newAnswers = new Answer({
+			quizId,
+			studentId,
 			answers: answersToSave,
 			createdAt: Date.now(),
 		});
@@ -205,7 +204,7 @@ export const getAllStudentAnswersByQuizIdService = async req => {
 			};
 		}
 
-		const studentAnswers = await Answer.find({ quizId, studentId });
+		const studentAnswers = await Answer.find();
 
 		return {
 			status: 200,

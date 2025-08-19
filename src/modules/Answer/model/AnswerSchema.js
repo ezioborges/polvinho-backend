@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
 
 const AnswerSchema = new mongoose.Schema({
+	quizId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'quizzes',
+		required: true,
+	},
+	studentId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'users',
+		required: true,
+	},
 	answers: [
 		{
-			attempt: { type: Number, required: true },
-			studentId: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'users',
-				required: true,
-			},
-			quizId: {
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'quizzes',
-				required: true,
-			},
 			questionId: {
 				type: mongoose.Schema.Types.ObjectId,
 				ref: 'questions',
@@ -23,6 +22,7 @@ const AnswerSchema = new mongoose.Schema({
 				type: String,
 				required: true,
 			},
+			attempt: { type: Number }, // se quiser controlar tentativas
 		},
 	],
 	createdAt: { type: Date, default: Date.now() },

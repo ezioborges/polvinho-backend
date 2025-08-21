@@ -13,13 +13,7 @@ export const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-	cors({
-		origin: 'https://little-octopus.vercel.app',
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
-		allowedHeaders: ['Content-Type', 'Authorization'],
-	}),
-);
+app.use(cors());
 
 app.use('/login', login);
 app.use('/subjects', subjects);

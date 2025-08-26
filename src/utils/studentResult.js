@@ -23,7 +23,6 @@ export const studentResult = async (quizId, studentId, quiz) => {
 
 	// Busca todas as respostas do aluno para esse quiz
 	const studentAnswersDocs = await Answer.find({ quizId, studentId });
-	console.log('🚀 ~ studentResult ~ studentAnswersDocs:', studentAnswersDocs);
 
 	// Para cada tentativa (documento), calcula o resultado
 	const results = studentAnswersDocs.map(answerDoc => {

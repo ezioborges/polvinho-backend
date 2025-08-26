@@ -167,6 +167,15 @@ export const studentAnswerService = async req => {
 		});
 		await newAnswers.save();
 
+		await Quiz.findByIdAndUpdate(
+			quizId,
+			{
+				studentStarted: false,
+				updatedAt: Date.now(),
+			},
+			{ new: true, runValidators: true },
+		);
+
 		return {
 			status: 201,
 			data: {

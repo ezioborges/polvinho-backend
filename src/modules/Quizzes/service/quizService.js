@@ -228,6 +228,7 @@ export const studentStartQuizService = async req => {
 			{
 				$set: {
 					attemptsFinished: quiz.maxAttempts <= 0,
+					studentStarted: true,
 					updatedAt: Date.now(),
 				},
 			},

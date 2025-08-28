@@ -48,7 +48,7 @@ export const createQuizService = async req => {
 	} catch (error) {
 		return {
 			status: 500,
-			data: { message: `Erro ao criar quiz: ${error.data}` },
+			data: { message: `Erro ao criar quiz: ${error.message}` },
 		};
 	}
 };

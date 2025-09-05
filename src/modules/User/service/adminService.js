@@ -1,4 +1,7 @@
-import { createUserValidator } from '../../../validators/createUserValidator.js';
+import {
+	userExisitsValidator,
+	UsersArrayValidator,
+} from '../../../validators/usersValidator.js';
 import Subject from '../../Disciplines/model/SubjectSchema.js';
 import User from '../model/UserSchema.js';
 
@@ -28,11 +31,6 @@ export const createProfessorService = async req => {
 			};
 		}
 
-		const validation = createUserValidator(reqBody);
-		if (validation) {
-			return validation;
-		}
-
 		const newProfessor = new User({
 			...reqBody,
 			subject: subjectData ? subjectData._id : [],
@@ -51,7 +49,7 @@ export const createProfessorService = async req => {
 			);
 		}
 
-		// await newProfessor.save();
+		await newProfessor.save();
 		return {
 			status: 201,
 			data: { message: 'Professor criado com sucesso!' },
@@ -66,11 +64,9 @@ export const getAllProfessorsService = async () => {
 		const professors = await User.find({ role: 'professor' });
 
 		//verifica se o array de professores não está vazio
-		if (!professors || professors.length <= 0) {
-			return {
-				status: 404,
-				data: { message: 'Não há professores cadastrados!' },
-			};
+		const validation = UsersArrayValidator(professors, 'professor');
+		if (validation) {
+			return validation;
 		}
 
 		return { status: 200, data: professors };
@@ -84,11 +80,9 @@ export const getProfessorByIdService = async req => {
 	try {
 		const professorData = await User.findById(professorId);
 
-		if (!professorData) {
-			return {
-				status: 404,
-				data: { message: 'Professor não encontrado' },
-			};
+		const validation = userExisitsValidator(professorData, 'professor');
+		if (validation) {
+			return validation;
 		}
 
 		return { status: 200, data: professorData };

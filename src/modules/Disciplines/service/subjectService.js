@@ -75,6 +75,9 @@ export const updateSubjctService = async req => {
 
 		const subjectExists = await Subject.findById(subjectId);
 
+		/// remove a disciplina do professor anterior
+		//TODO: MODIFICAR PARA VERIFICAR SE A LISTA ATUALIZADA PERDEU ALGUM ID E ATUALIZAR O ARRAY, NÃO EXCLUIR AS DISCIPLINAS DE FORMA AUTOMÁTICA,
+		//UM PROFESSOR PODE TER MAIS DE UMA MATÉRIA CADASTRADA.
 		await User.findByIdAndUpdate(
 			subjectExists.professor,
 			{
@@ -84,6 +87,9 @@ export const updateSubjctService = async req => {
 			{ new: true, runValidators: true },
 		);
 
+		// atualiza o professor atual
+		//TODO: ATUALIZAÇÃO DO ARRAY DEVERÁ USAR AS FUNÇÕES NATIVAS DO MONGOSO PARA TRABALHAR COM ARRAYS.
+		//EX: $push?
 		await User.findByIdAndUpdate(
 			professorExists._id,
 			{
@@ -93,6 +99,9 @@ export const updateSubjctService = async req => {
 			{ new: true, runValidators: true },
 		);
 
+		// atualiza a disciplina atual
+		//TODO: INCREMENTAR A ATUALIZAÇÃO DOS ALUNOS E QUIZZES, CASO EXISTA
+		//uma subject por de ter vários alunos ou quizzes, mas apenas um professor(?).
 		await Subject.findByIdAndUpdate(
 			subjectId,
 			{
@@ -116,6 +125,8 @@ export const deleteSubjectService = async req => {
 	try {
 		const { subjectId } = req.params;
 
+		// exclui a disciplina
+		//TODO: VER A NECESSIDADE DE EXCLUIR AS INFORMAÇÕES DOS ARRAYS E PROFESSOR
 		await Subject.findByIdAndUpdate(subjectId, {
 			isDeleted: true,
 			updatedAt: Date.now(),

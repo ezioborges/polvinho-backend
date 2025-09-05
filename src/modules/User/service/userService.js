@@ -1,5 +1,6 @@
 import User from '../model/UserSchema.js';
 
+//TODO: VER A NECESSIDADE DESSAS FUÇÕES
 export const getAllUsersService = async () => {
 	try {
 		const users = await User.find();

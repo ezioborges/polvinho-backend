@@ -186,6 +186,7 @@ export const deleteProfessorService = async req => {
 			{
 				isDeleted: true,
 				subject: [],
+				quizzes: [],
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },

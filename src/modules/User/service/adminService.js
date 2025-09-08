@@ -1,3 +1,4 @@
+import { subjectExistsValidator } from '../../../validators/subjectValidation.js';
 import {
 	userExisitsValidator,
 	UsersArrayValidator,
@@ -98,50 +99,46 @@ export const updateProfessorService = async req => {
 
 		const professorExist = await User.findById(professorId);
 
-		if (!professorExist) {
-			// status 404 - not found
-			return {
-				status: 404,
-				data: { message: 'Professor não encontrado!' },
-			};
+		const validatProfessor = userExisitsValidator(
+			professorExist,
+			'professor',
+		);
+		if (validatProfessor) {
+			return validatProfessor;
 		}
 
 		const subjectData = await Subject.findOne({ name: subject });
 
-		if (!subjectData) {
-			return {
-				status: 404,
-				data: { message: 'A disciplina não está cadastrada!' },
-			};
+		const validatSubject = subjectExistsValidator(subjectData);
+
+		if (validatSubject) {
+			return validatSubject;
 		}
 
 		// remove a disciplina do professor anterior
-		//TODO: MODIFICAR PARA VERIFICAR SE A LISTA ATUALIZADA PERDEU ALGUM ID E ATUALIZAR O ARRAY, NÃO EXCLUIR AS DISCIPLINAS DE FORMA AUTOMÁTICA,
-		//UM PROFESSOR PODE TER MAIS DE UMA MATÉRIA CADASTRADA.
+		// aqui usei $pull por que ele retira apenas o id da disciplina anterior
 		await User.findByIdAndUpdate(
 			subjectData.professor,
 			{
-				subject: [],
+				$pull: { subject: subjectData._id },
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },
 		);
 
 		// atualiza o professor atual
-		//TODO: ATUALIZAÇÃO DO ARRAY DEVERÁ USAR AS FUNÇÕES NATIVAS DO MONGOSO PARA TRABALHAR COM ARRAYS.
-		//EX: $push?
+		// Aqui usei o $addToSet, por que ele não adiciona ids duplicados
 		await User.findByIdAndUpdate(
 			professorExist._id,
 			{
 				...reqBody,
-				subject: subjectData._id,
+				$addToSet: { subject: subjectData._id },
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },
 		);
 
 		//atualiza a disciplina para receber o id do professor
-		//TODO: VERIFICAR DEPOIS SE UMA DISCIPLINA PODE TER MAIS DE UM PROFESSOR ASSOCIADO
 		await Subject.findByIdAndUpdate(
 			subjectData._id,
 			{

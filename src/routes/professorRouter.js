@@ -1,5 +1,8 @@
 import express from 'express';
-import { createUserMiddleware } from '../middlewares/UserMiddleware.js';
+import {
+	createUserMiddleware,
+	updateUserMiddleware,
+} from '../middlewares/UserMiddleware.js';
 import {
 	createProfessorController,
 	deleteProfessorController,
@@ -26,6 +29,7 @@ router.get(
 
 router.put(
 	'/:professorId',
+	updateUserMiddleware,
 	async (req, res) => await updateProfessorController(req, res),
 );
 

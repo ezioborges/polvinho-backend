@@ -25,11 +25,9 @@ export const createProfessorService = async req => {
 
 		// verifica se a disciplina existe
 		// o professor só pode ser cadastrada a uma disciplina existente
-		if (!subjectData) {
-			return {
-				status: 404,
-				data: { message: 'Disciplina não consta no cadastro!' },
-			};
+		const validateSubject = subjectExistsValidator(subjectData);
+		if (validateSubject) {
+			return validateSubject;
 		}
 
 		const newProfessor = new User({
@@ -99,12 +97,12 @@ export const updateProfessorService = async req => {
 
 		const professorExist = await User.findById(professorId);
 
-		const validatProfessor = userExisitsValidator(
+		const validateProfessor = userExisitsValidator(
 			professorExist,
 			'professor',
 		);
-		if (validatProfessor) {
-			return validatProfessor;
+		if (validateProfessor) {
+			return validateProfessor;
 		}
 
 		const subjectData = await Subject.findOne({ name: subject });
@@ -180,7 +178,6 @@ export const deleteProfessorService = async req => {
 			);
 		}
 
-		//TODO: QUANDO O PROFESSOR FOR DELETADO TAMBÉM DELETAR OS IDS DE QUIZZES, TORNANDO UM ARRAY VAZIO.
 		await User.findByIdAndUpdate(
 			professorExists._id,
 			{
@@ -206,14 +203,9 @@ export const createStudentService = async req => {
 		const { subject, ...studentData } = req.body;
 		const subjectData = await Subject.findOne({ name: subject });
 
-		if (!subjectData) {
-			return {
-				status: 400,
-				data: {
-					message:
-						'Estudantes devem ser cadastrados em disciplinas existentes!',
-				},
-			};
+		const validateSubject = subjectExistsValidator(subjectData);
+		if (validateSubject) {
+			return validateSubject;
 		}
 
 		const newStudent = new User({
@@ -230,7 +222,9 @@ export const createStudentService = async req => {
 			},
 			{ new: true, runValidators: true },
 		);
+
 		await newStudent.save();
+
 		return {
 			status: 201,
 			data: { message: 'Estudante criado com sucesso!' },
@@ -244,6 +238,11 @@ export const getAllStudentsService = async () => {
 	try {
 		const students = await User.find({ role: 'aluno' });
 
+		const validateStudent = UsersArrayValidator(students, 'student');
+		if (validateStudent) {
+			return validateStudent;
+		}
+
 		return { status: 200, data: students };
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
@@ -254,8 +253,14 @@ export const getStudentByIdService = async req => {
 	try {
 		const { studentId } = req.params;
 
-		const studentExists = await User.findById(studentId);
-		return { status: 200, data: studentExists };
+		const student = await User.findById(studentId);
+
+		const validateStudent = userExisitsValidator(student);
+		if (validateStudent) {
+			return validateStudent;
+		}
+
+		return { status: 200, data: student };
 	} catch (error) {
 		return { status: 500, data: { message: error.message } };
 	}
@@ -266,27 +271,24 @@ export const updateStudentService = async req => {
 		const { studentId } = req.params;
 		const { subject, ...studentData } = req.body;
 
-		const studentExists = await User.findById(studentId);
+		const student = await User.findById(studentId);
 
-		if (!studentExists) {
-			return {
-				status: 404,
-				data: { message: 'Estudante não encontrado' },
-			};
+		const validateStudent = userExisitsValidator(student);
+		if (validateStudent) {
+			return validateStudent;
 		}
 
 		const subjectData = await Subject.findOne({ name: subject });
 
-		if (!subjectData) {
-			return {
-				status: 404,
-				data: { message: 'Disciplina não encontrada' },
-			};
+		const validateSubject = subjectExistsValidator(subjectData);
+
+		if (validateSubject) {
+			return validateSubject;
 		}
 
 		// adiciona a disciplina no campo subjects
 		await User.findByIdAndUpdate(
-			studentExists._id,
+			student._id,
 			{
 				...studentData,
 				$addToSet: { subject: subjectData._id }, // semelhante ao $push, mas evita dados duplicados.
@@ -299,7 +301,7 @@ export const updateStudentService = async req => {
 		await Subject.findByIdAndUpdate(
 			subjectData._id,
 			{
-				$addToSet: { students: studentExists._id },
+				$addToSet: { students: student._id },
 				updatedAt: Date.now(),
 			},
 			{ new: true, runValidators: true },
@@ -317,13 +319,12 @@ export const deleteStudentService = async req => {
 	try {
 		const { studentId } = req.params;
 
-		const studentExists = await User.findById(studentId);
+		const student = await User.findById(studentId);
 
-		if (!studentExists) {
-			return {
-				status: 404,
-				data: { message: 'Não foipossivel encontrar estudante' },
-			};
+		const validateStudent = userExisitsValidator(student);
+
+		if (validateStudent) {
+			return validateStudent;
 		}
 
 		await Subject.updateMany(
@@ -336,7 +337,7 @@ export const deleteStudentService = async req => {
 		);
 
 		await User.findByIdAndUpdate(
-			studentExists._id,
+			student._id,
 			{
 				isDeleted: true,
 				subject: [],
@@ -358,6 +359,13 @@ export const getSubjectsByStudentService = async req => {
 		const { studentId } = req.params;
 
 		const student = await User.findById(studentId).populate('subject');
+		const studentToValidate = await User.findById(studentId);
+
+		const validateStudent = userExisitsValidator(studentToValidate);
+
+		if (validateStudent) {
+			return validateStudent;
+		}
 
 		return {
 			status: 200,

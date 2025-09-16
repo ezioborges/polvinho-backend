@@ -1,5 +1,9 @@
 import express from 'express';
 import {
+	createUserMiddleware,
+	updateUserMiddleware,
+} from '../middlewares/UserMiddleware.js';
+import {
 	createProfessorController,
 	deleteProfessorController,
 	getAllProfessorsController,
@@ -10,7 +14,11 @@ import '../modules/User/model/UserSchema.js';
 
 const router = express.Router();
 
-router.post('/', async (req, res) => await createProfessorController(req, res));
+router.post(
+	'/',
+	createUserMiddleware,
+	async (req, res) => await createProfessorController(req, res),
+);
 
 router.get('/', async (req, res) => await getAllProfessorsController(req, res));
 
@@ -21,6 +29,7 @@ router.get(
 
 router.put(
 	'/:professorId',
+	updateUserMiddleware,
 	async (req, res) => await updateProfessorController(req, res),
 );
 
